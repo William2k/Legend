@@ -1,5 +1,6 @@
 package com.legendApi.config;
 
+import com.legendApi.core.CustomJdbc;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -17,7 +18,7 @@ import java.util.Properties;
 @Configuration
 public class DatabaseConfig {
     @Bean
-    public NamedParameterJdbcTemplate namedParameterJdbcTemplate() {
+    public CustomJdbc getJdbc() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
         dataSource.setUsername("legendAdmin");
@@ -25,6 +26,6 @@ public class DatabaseConfig {
         dataSource.setCatalog("legend");
         dataSource.setSchema("legend");
         dataSource.setUrl("jdbc:postgresql:legend");
-        return new NamedParameterJdbcTemplate(dataSource);
+        return new CustomJdbc(dataSource);
     }
 }
