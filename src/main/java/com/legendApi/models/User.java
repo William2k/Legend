@@ -1,25 +1,23 @@
 package com.legendApi.models;
 
 public class User {
-    private int id;
+    private long id;
+    private String username;
     private String firstName;
     private String lastName;
     private String emailAddress;
     private String password;
     private boolean isActive;
 
-    public User() {}
-
-    public User(int id, String firstName, String lastName) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
-
-    public int getId() {
+    public long getId() {
         return id;
     }
-    public void setId(int value) {id = value;}
+    public void setId(long value) {id = value;}
+
+    public String getUsername() {
+        return username;
+    }
+    public void setUsername(String value) {username = value;}
 
     public String getFirstName() {
         return firstName;
@@ -41,8 +39,4 @@ public class User {
 
     public boolean getIsActive() {return  isActive;}
     public void  setIsActive(boolean value) {isActive = value;}
-
-    public String getFullName() {
-        return firstName + " " + lastName;
-    }
 }
