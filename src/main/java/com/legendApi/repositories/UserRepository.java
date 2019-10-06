@@ -37,7 +37,7 @@ public class UserRepository {
             user.setLastName(rs.getString("last_name"));
             user.setEmailAddress(rs.getString("email_address"));
             user.setPassword(rs.getString("password"));
-            user.setActive(rs.getBoolean("is_active"));
+            user.setIsActive(rs.getBoolean("is_active"));
             return user;
         });
 

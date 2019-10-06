@@ -40,7 +40,7 @@ public class User {
     public void setPassword(String value) {password = value;}
 
     public boolean getIsActive() {return  isActive;}
-    public void  setActive(boolean value) {isActive = value;}
+    public void  setIsActive(boolean value) {isActive = value;}
 
     public String getFullName() {
         return firstName + " " + lastName;
