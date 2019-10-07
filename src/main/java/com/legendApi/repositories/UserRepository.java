@@ -1,9 +1,7 @@
 package com.legendApi.repositories;
 
-import com.legendApi.models.User;
+import com.legendApi.models.entities.UserEntity;
 
-import java.util.List;
-
-public interface UserRepository extends CRUDRepository<User> {
-    User getByUsername(String username);
+public interface UserRepository extends CRUDRepository<UserEntity> {
+    UserEntity getByUsername(String username);
 }

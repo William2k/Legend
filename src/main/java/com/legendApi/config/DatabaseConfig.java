@@ -17,12 +17,12 @@ public class DatabaseConfig {
 
     @Bean
     public CustomJdbc getJdbc() {
-        String url = config.getConfigValue("spring.datasource.url");
-        String driverClassName = config.getConfigValue("spring.datasource.driverClassName");
-        String username = config.getConfigValue("spring.datasource.username");
-        String password = config.getConfigValue("spring.datasource.password");
-        String catalog = config.getConfigValue("spring.datasource.catalog");
-        String schema = config.getConfigValue("spring.datasource.schema");
+        String url = config.getConfigValue("datasource.url");
+        String driverClassName = config.getConfigValue("datasource.driverClassName");
+        String username = config.getConfigValue("datasource.username");
+        String password = config.getConfigValue("datasource.password");
+        String catalog = config.getConfigValue("datasource.catalog");
+        String schema = config.getConfigValue("datasource.schema");
 
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(driverClassName);

@@ -1,5 +1,7 @@
 package com.legendApi.controllers;
 
+import com.legendApi.models.Login;
+import com.legendApi.models.RegisterUser;
 import com.legendApi.models.User;
 import com.legendApi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +19,12 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping("active")
+    @RequestMapping(value = "active", method = RequestMethod.GET)
     public Boolean isActive() {
         return true;
     }
 
-    @RequestMapping("")
+    @RequestMapping(method = RequestMethod.GET)
     public List<User> getUser() {
         return userService.getUsers();
     }

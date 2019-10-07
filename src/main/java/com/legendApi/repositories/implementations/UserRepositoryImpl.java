@@ -2,6 +2,7 @@ package com.legendApi.repositories.implementations;
 
 import com.legendApi.core.CustomJdbc;
 import com.legendApi.models.User;
+import com.legendApi.models.entities.UserEntity;
 import com.legendApi.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -21,9 +22,10 @@ public class UserRepositoryImpl implements UserRepository {
         this.customJdbc = customJdbc;
     }
 
-    private User userRowMapping(ResultSet rs, int rowNum) throws SQLException {
-        User user = new User();
+    private UserEntity userRowMapping(ResultSet rs, int rowNum) throws SQLException {
+        UserEntity user = new UserEntity();
         user.setId(rs.getLong("id"));
+        user.setUsername(rs.getString("username"));
         user.setFirstName(rs.getString("first_name"));
         user.setLastName(rs.getString("last_name"));
         user.setEmailAddress(rs.getString("email_address"));
@@ -33,50 +35,49 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User getByUsername(String username) {
+    public UserEntity getByUsername(String username) {
         String sql = "SELECT * FROM legend.users " +
                 "WHERE normalised_username = :username";
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username", username.toUpperCase());
 
-        User result = customJdbc.queryForObject(sql, parameters, this::userRowMapping);
+        UserEntity result = customJdbc.queryForObject(sql, parameters, this::userRowMapping);
 
         return result;
     }
 
     @Override
-    public List<User> getAll() {
-        List<User> result = customJdbc.query("SELECT * FROM legend.users", this::userRowMapping);
+    public List<UserEntity> getAll() {
+        List<UserEntity> result = customJdbc.query("SELECT * FROM legend.users", this::userRowMapping);
 
         return result;
     }
 
     @Override
-    public User getById(long id) {
+    public UserEntity getById(long id) {
         String sql = "SELECT * FROM legend.users " +
                 "WHERE id = :id";
 
         Map<String, Long> parameters = new HashMap<>();
         parameters.put("id", id);
 
-        User result = customJdbc.queryForObject(sql, parameters, this::userRowMapping);
+        UserEntity result = customJdbc.queryForObject(sql, parameters, this::userRowMapping);
 
         return result;
     }
 
     @Override
-    public long add(User user) {
-        String sql = "INSERT INTO legend.users(id, username, normalised_username, first_name, last_name, email_address, password, is_active)" +
+    public long add(UserEntity user) {
+        String sql = "INSERT INTO legend.users(username, normalised_username, first_name, last_name, email_address, password, is_active) " +
                 "VALUES (:username, :normalisedUsername, :firstName, :lastName, :emailAddress, :password, :isActive)";
 
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("id", user.getId());
         parameters.put("username", user.getUsername());
         parameters.put("normalisedUsername", user.getUsername().toUpperCase());
         parameters.put("firstName", user.getFirstName());
         parameters.put("lastName", user.getLastName());
-        parameters.put("emailAddress", user.getLastName());
+        parameters.put("emailAddress", user.getEmailAddress());
         parameters.put("password", user.getPassword());
         parameters.put("isActive", user.getIsActive());
 
@@ -84,8 +85,8 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void update(User user) {
-        String sql = "UPDATE legend.users" +
+    public void update(UserEntity user) {
+        String sql = "UPDATE legend.users " +
                 "SET first_name=:firstName, last_name=:lastName, email_address=:emailAddress, password=:password, is_active=:isActive " +
                 "WHERE id = :id";
 
@@ -93,7 +94,7 @@ public class UserRepositoryImpl implements UserRepository {
         parameters.put("id", user.getId());
         parameters.put("firstName", user.getFirstName());
         parameters.put("lastName", user.getLastName());
-        parameters.put("emailAddress", user.getLastName());
+        parameters.put("emailAddress", user.getEmailAddress());
         parameters.put("password", user.getPassword());
         parameters.put("isActive", user.getIsActive());
 
@@ -102,7 +103,8 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void delete(long id) {
-        String sql = "DELETE FROM legend.users " +
+        String sql = "UPDATE legend.users" +
+                "SET is_active = false " +
                 "WHERE id = :id";
 
         Map<String, Object> parameters = new HashMap<>();
