@@ -7,8 +7,10 @@ import com.legendApi.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +32,10 @@ public class UserRepositoryImpl implements UserRepository {
         user.setLastName(rs.getString("last_name"));
         user.setEmailAddress(rs.getString("email_address"));
         user.setPassword(rs.getString("password"));
+
+        Array roles = rs.getArray("roles");
+
+        user.setStringRoles((String[]) roles.getArray());
         user.setIsActive(rs.getBoolean("is_active"));
         return user;
     }
@@ -43,6 +49,19 @@ public class UserRepositoryImpl implements UserRepository {
         parameters.put("username", username.toUpperCase());
 
         UserEntity result = customJdbc.queryForObject(sql, parameters, this::userRowMapping);
+
+        return result;
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        String sql = "SELECT EXISTS (SELECT id FROM legend.users " +
+                "WHERE normalised_username = :username)";
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("username", username.toUpperCase());
+
+        boolean result = customJdbc.queryForObject(sql, parameters, boolean.class);
 
         return result;
     }
@@ -69,8 +88,8 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public long add(UserEntity user) {
-        String sql = "INSERT INTO legend.users(username, normalised_username, first_name, last_name, email_address, password, is_active) " +
-                "VALUES (:username, :normalisedUsername, :firstName, :lastName, :emailAddress, :password, :isActive)";
+        String sql = "INSERT INTO legend.users(username, normalised_username, first_name, last_name, email_address, password, roles, is_active) " +
+                "VALUES (:username, :normalisedUsername, :firstName, :lastName, :emailAddress, :password, :roles, :isActive)";
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("username", user.getUsername());
@@ -79,6 +98,7 @@ public class UserRepositoryImpl implements UserRepository {
         parameters.put("lastName", user.getLastName());
         parameters.put("emailAddress", user.getEmailAddress());
         parameters.put("password", user.getPassword());
+        parameters.put("roles", user.getStringRoles());
         parameters.put("isActive", user.getIsActive());
 
         return customJdbc.update(sql, parameters);
@@ -87,7 +107,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void update(UserEntity user) {
         String sql = "UPDATE legend.users " +
-                "SET first_name=:firstName, last_name=:lastName, email_address=:emailAddress, password=:password, is_active=:isActive " +
+                "SET first_name=:firstName, last_name=:lastName, email_address=:emailAddress, password=:password, roles=:roles is_active=:isActive " +
                 "WHERE id = :id";
 
         Map<String, Object> parameters = new HashMap<>();
@@ -96,6 +116,7 @@ public class UserRepositoryImpl implements UserRepository {
         parameters.put("lastName", user.getLastName());
         parameters.put("emailAddress", user.getEmailAddress());
         parameters.put("password", user.getPassword());
+        parameters.put("roles", user.getStringRoles());
         parameters.put("isActive", user.getIsActive());
 
         customJdbc.update(sql, parameters);

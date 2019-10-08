@@ -1,5 +1,7 @@
 package com.legendApi.models.entities;
 
+import java.util.List;
+
 public class UserEntity {
     private long id;
     private String username;
@@ -7,6 +9,7 @@ public class UserEntity {
     private String lastName;
     private String emailAddress;
     private String password;
+    private String[] stringRoles;
     private boolean isActive;
 
     public long getId() {
@@ -36,6 +39,9 @@ public class UserEntity {
 
     public String getPassword() {return  password;}
     public void setPassword(String value) {password = value;}
+
+    public String[] getStringRoles() {return stringRoles;}
+    public void setStringRoles(String[] value) {stringRoles = value;}
 
     public boolean getIsActive() {return  isActive;}
     public void  setIsActive(boolean value) {isActive = value;}

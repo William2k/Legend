@@ -1,0 +1,44 @@
+package com.legendApi.security;
+
+import com.legendApi.models.User;
+import com.legendApi.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+
+
+@Service
+public class CustomUserDetails implements UserDetailsService {
+    private final UserRepository userRepository;
+
+    @Autowired
+    public CustomUserDetails(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) {
+        final User user = new User(userRepository.getByUsername(username));
+
+        return BuildUserDetails(user);
+    }
+
+    private UserDetails BuildUserDetails(User user) throws UsernameNotFoundException {
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+
+        return org.springframework.security.core.userdetails.User//
+                .withUsername(user.getUsername())//
+                .password(user.getPassword())//
+                .authorities(user.getRoles())//
+                .accountExpired(false)//
+                .accountLocked(false)//
+                .credentialsExpired(false)//
+                .disabled(false)//
+                .build();
+    }
+}
