@@ -1,15 +1,15 @@
 package com.legendApi.controllers;
 
-import com.legendApi.models.Login;
-import com.legendApi.models.RegisterUser;
-import com.legendApi.models.User;
+import com.legendApi.dto.UserResponseDTO;
 import com.legendApi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@PreAuthorize("hasRole('ROLE_USER')")
 @RequestMapping("api/user")
 public class UserController {
     private final UserService userService;
@@ -19,18 +19,20 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping(value = "active", method = RequestMethod.GET)
-    public Boolean isActive() {
-        return true;
-    }
-
     @RequestMapping(method = RequestMethod.GET)
-    public List<User> getUser() {
+    public List<UserResponseDTO> getUser() {
+        // Should return current user
         return userService.getUsers();
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public User getUser(@PathVariable(value="id") long id) {
+    public UserResponseDTO getUser(@PathVariable(value="id") long id) {
         return userService.getUserById(id);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "all", method = RequestMethod.GET)
+    public List<UserResponseDTO> getAllUsers() {
+        return userService.getUsers();
     }
 }

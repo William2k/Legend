@@ -19,7 +19,7 @@ public class AccountController {
     }
 
     @RequestMapping(value = "signIn", method = RequestMethod.POST)
-    public String SignIn(@RequestBody Login model) {
+    public String signIn(@RequestBody Login model) {
         String token = accountService.signIn(model);
 
         return token;
@@ -27,7 +27,7 @@ public class AccountController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "signUp", method = RequestMethod.POST)
-    public void SignUp(@RequestBody RegisterUser model) {
+    public void signUp(@RequestBody RegisterUser model) {
         accountService.signUp(model);
     }
 }

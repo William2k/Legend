@@ -1,5 +1,6 @@
 package com.legendApi.services;
 
+import com.legendApi.dto.UserResponseDTO;
 import com.legendApi.models.Login;
 import com.legendApi.models.RegisterUser;
 import com.legendApi.models.User;
@@ -20,13 +21,13 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getUsers() {
+    public List<UserResponseDTO> getUsers() {
         return userRepository.getAll().stream()
-                .map(User::new)
+                .map(UserResponseDTO::new)
                 .collect(Collectors.toList());
     }
 
-    public User getUserById(long id) {
-        return new User(userRepository.getById(id));
+    public UserResponseDTO getUserById(long id) {
+        return new UserResponseDTO(userRepository.getById(id));
     }
 }
