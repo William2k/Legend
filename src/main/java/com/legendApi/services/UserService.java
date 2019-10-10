@@ -1,7 +1,6 @@
 package com.legendApi.services;
 
 import com.legendApi.dto.UserResponseDTO;
-import com.legendApi.models.Login;
 import com.legendApi.models.RegisterUser;
 import com.legendApi.models.User;
 import com.legendApi.models.entities.UserEntity;
@@ -30,4 +29,6 @@ public class UserService {
     public UserResponseDTO getUserById(long id) {
         return new UserResponseDTO(userRepository.getById(id));
     }
+
+    public UserResponseDTO getUserByUsername(String username) {return new UserResponseDTO(userRepository.getByUsername(username));}
 }

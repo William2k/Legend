@@ -1,6 +1,6 @@
 package com.legendApi.models;
 
-public class Login {
+public class SignIn {
     private String username;
     private String password;
     private boolean rememberMe;

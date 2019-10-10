@@ -7,7 +7,6 @@ public class UserResponseDTO {
     public UserResponseDTO() { }
 
     public UserResponseDTO(UserEntity user) {
-        setId(user.getId());
         setUsername(user.getUsername());
         setFirstName(user.getFirstName());
         setLastName(user.getLastName());
@@ -16,18 +15,12 @@ public class UserResponseDTO {
         setIsActive(user.getIsActive());
     }
 
-    private long id;
     private String username;
     private String firstName;
     private String lastName;
     private String emailAddress;
     private String[] stringRoles;
     private boolean isActive;
-
-    public long getId() {
-        return id;
-    }
-    public void setId(long value) {id = value;}
 
     public String getUsername() {
         return username;

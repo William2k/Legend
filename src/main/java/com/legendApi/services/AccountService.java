@@ -1,11 +1,13 @@
 package com.legendApi.services;
 
 import com.legendApi.config.ConfigProperties;
-import com.legendApi.core.exceptions.CustomException;
-import com.legendApi.models.Login;
+import com.legendApi.core.exceptions.CustomHttpException;
+import com.legendApi.dto.UserResponseWithTokenDTO;
 import com.legendApi.models.RegisterUser;
 import com.legendApi.models.Role;
+import com.legendApi.models.SignIn;
 import com.legendApi.models.User;
+import com.legendApi.models.entities.UserEntity;
 import com.legendApi.repositories.UserRepository;
 import com.legendApi.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,21 +35,25 @@ public class AccountService {
         this.authenticationManager = authenticationManager;
     }
 
-    public String signIn(Login login) {
-        return signIn(login.getUsername(), login.getPassword());
+    public UserResponseWithTokenDTO signIn(SignIn model) {
+        return signIn(model.getUsername(), model.getPassword());
     }
 
-    public String signIn(String username, String password) {
+    public UserResponseWithTokenDTO signIn(String username, String password) {
         try {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
 
             authenticationManager.authenticate(authenticationToken);
 
+            UserEntity userEntity = userRepository.getByUsername(username);
+
             User user = new User(userRepository.getByUsername(username));
 
-            return jwtTokenProvider.createToken(username, user.getRoles());
+            String token = jwtTokenProvider.createToken(username, user.getId(), user.getRoles());
+
+            return new UserResponseWithTokenDTO(userEntity, token);
         } catch (AuthenticationException e) {
-            throw new CustomException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
+            throw new CustomHttpException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
 
@@ -62,9 +68,9 @@ public class AccountService {
             user.addRole(Role.ROLE_USER);
             user.setIsActive(true);
             userRepository.add(user);
-            return jwtTokenProvider.createToken(user.getUsername(), user.getRoles());
+            return jwtTokenProvider.createToken(user.getUsername(), user.getId(), user.getRoles());
         } else {
-            throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
+            throw new CustomHttpException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
 

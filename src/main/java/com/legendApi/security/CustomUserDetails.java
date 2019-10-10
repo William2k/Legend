@@ -23,10 +23,16 @@ public class CustomUserDetails implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         final User user = new User(userRepository.getByUsername(username));
 
-        return BuildUserDetails(user);
+        return buildUserDetails(user);
     }
 
-    private UserDetails BuildUserDetails(User user) throws UsernameNotFoundException {
+    public UserDetails loadUserById(int id) {
+        final User user = new User(userRepository.getById(id));
+
+        return buildUserDetails(user);
+    }
+
+    private UserDetails buildUserDetails(User user) throws UsernameNotFoundException {
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
