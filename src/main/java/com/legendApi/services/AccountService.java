@@ -53,7 +53,7 @@ public class AccountService {
 
             return new UserResponseWithTokenDTO(userEntity, token);
         } catch (AuthenticationException e) {
-            throw new CustomHttpException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
+            throw new CustomHttpException("Invalid username/password supplied", HttpStatus.UNAUTHORIZED);
         }
     }
 

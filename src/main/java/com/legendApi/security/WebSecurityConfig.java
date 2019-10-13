@@ -8,11 +8,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -24,6 +24,10 @@ import java.util.List;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtTokenProvider jwtTokenProvider;
+
+    private final String[] authAllowUrls = new String[]{
+            "/api/account/authenticate", "/api/account/signin", "/api/account/signup"
+    };
 
     @Autowired
     public WebSecurityConfig(JwtTokenProvider jwtTokenProvider) {
@@ -52,20 +56,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-        http.cors().configurationSource(corsConfigurationSource());
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        http.authorizeRequests()
-                .antMatchers("/api/account/authenticate").permitAll()
-                .antMatchers("/api/account/signin").permitAll()
-                .antMatchers("/api/account/signup").permitAll()
-                .anyRequest().authenticated();
-
-        http.exceptionHandling().accessDeniedPage("/api/account/signin");
-
-        http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
-        http.httpBasic();
+        http
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                    .csrf().disable()
+                    .authorizeRequests()
+                    .antMatchers(authAllowUrls).permitAll()
+                    .anyRequest().authenticated()
+                .and()
+                    .cors().configurationSource(corsConfigurationSource())
+                .and()
+                    .exceptionHandling()
+                .and()
+                    .apply(new JwtTokenFilterConfigurer(jwtTokenProvider))
+                .and()
+                    .httpBasic();
     }
 
     @Bean
