@@ -1,7 +1,6 @@
 package com.legendApi.security;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -53,7 +52,7 @@ public class JwtTokenFilter extends GenericFilterBean {
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         } catch (CustomHttpException ex) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
+            response.sendError(ex.getHttpStatus().value(), ex.getMessage());
             throw ex;
         }
 
