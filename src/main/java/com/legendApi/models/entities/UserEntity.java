@@ -1,6 +1,6 @@
 package com.legendApi.models.entities;
 
-import java.util.List;
+import java.util.Date;
 
 public class UserEntity {
     private long id;
@@ -11,6 +11,8 @@ public class UserEntity {
     private String password;
     private String[] stringRoles;
     private boolean isActive;
+    private Date dateCreated;
+    private Date dateModified;
 
     public long getId() {
         return id;
@@ -45,4 +47,10 @@ public class UserEntity {
 
     public boolean getIsActive() {return  isActive;}
     public void  setIsActive(boolean value) {isActive = value;}
+
+    public Date getDateCreated() {return  dateCreated;}
+    public void  setDateCreated(Date value) {dateCreated = value;}
+
+    public Date getDateModified() {return  dateModified;}
+    public void  setDateModified(Date value) {dateModified = value;}
 }

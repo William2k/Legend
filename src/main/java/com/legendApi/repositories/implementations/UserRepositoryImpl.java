@@ -1,16 +1,12 @@
 package com.legendApi.repositories.implementations;
 
 import com.legendApi.core.CustomJdbc;
-import com.legendApi.models.User;
 import com.legendApi.models.entities.UserEntity;
 import com.legendApi.repositories.UserRepository;
+import com.legendApi.repositories.implementations.rowMappings.RowMappings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Array;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,22 +20,6 @@ public class UserRepositoryImpl implements UserRepository {
         this.customJdbc = customJdbc;
     }
 
-    private UserEntity userRowMapping(ResultSet rs, int rowNum) throws SQLException {
-        UserEntity user = new UserEntity();
-        user.setId(rs.getLong("id"));
-        user.setUsername(rs.getString("username"));
-        user.setFirstName(rs.getString("first_name"));
-        user.setLastName(rs.getString("last_name"));
-        user.setEmailAddress(rs.getString("email_address"));
-        user.setPassword(rs.getString("password"));
-
-        Array roles = rs.getArray("roles");
-
-        user.setStringRoles((String[]) roles.getArray());
-        user.setIsActive(rs.getBoolean("is_active"));
-        return user;
-    }
-
     @Override
     public UserEntity getByUsername(String username) {
         String sql = "SELECT * FROM legend.users " +
@@ -48,7 +28,7 @@ public class UserRepositoryImpl implements UserRepository {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username", username.toUpperCase());
 
-        UserEntity result = customJdbc.queryForObject(sql, parameters, this::userRowMapping);
+        UserEntity result = customJdbc.queryForObject(sql, parameters, RowMappings::userRowMapping);
 
         return result;
     }
@@ -61,14 +41,14 @@ public class UserRepositoryImpl implements UserRepository {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username", username.toUpperCase());
 
-        boolean result = customJdbc.queryForObject(sql, parameters, boolean.class);
+        boolean result = customJdbc.queryForObject(sql, parameters, boolean.class); // ignore error postgresql will always true or false for this
 
         return result;
     }
 
     @Override
     public List<UserEntity> getAll() {
-        List<UserEntity> result = customJdbc.query("SELECT * FROM legend.users", this::userRowMapping);
+        List<UserEntity> result = customJdbc.query("SELECT * FROM legend.users", RowMappings::userRowMapping);
 
         return result;
     }
@@ -81,7 +61,7 @@ public class UserRepositoryImpl implements UserRepository {
         Map<String, Long> parameters = new HashMap<>();
         parameters.put("id", id);
 
-        UserEntity result = customJdbc.queryForObject(sql, parameters, this::userRowMapping);
+        UserEntity result = customJdbc.queryForObject(sql, parameters, RowMappings::userRowMapping);
 
         return result;
     }
@@ -107,7 +87,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void update(UserEntity user) {
         String sql = "UPDATE legend.users " +
-                "SET first_name=:firstName, last_name=:lastName, email_address=:emailAddress, password=:password, roles=:roles is_active=:isActive " +
+                "SET first_name=:firstName, last_name=:lastName, email_address=:emailAddress, password=:password, roles=:roles, is_active=:isActive, date_modified=now() " +
                 "WHERE id = :id";
 
         Map<String, Object> parameters = new HashMap<>();
