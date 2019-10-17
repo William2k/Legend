@@ -2,21 +2,20 @@ package com.legendApi.models.entities;
 
 import java.util.Date;
 
-public class CommentEntity {
+public class GroupEntity {
     private long id;
-    private String content;
+    private String name;
     private boolean isActive;
     private Date dateCreated;
     private Date dateModified;
-    private long postId;
-    private long parentCommentId;
     private long creatorId;
+    private long subscriberCount;
 
     public long getId() {return id;}
     public void setId(long value) {id = value;}
 
-    public String getContent() {return content;}
-    public void setContent(String value) {content = value;}
+    public String getName() {return name;}
+    public void setName(String value) {name = value;}
 
     public boolean getIsActive() {return  isActive;}
     public void  setIsActive(boolean value) {isActive = value;}
@@ -27,12 +26,9 @@ public class CommentEntity {
     public Date getDateModified() {return  dateModified;}
     public void  setDateModified(Date value) {dateModified = value;}
 
-    public long getPostId() {return postId;}
-    public void setPostId(long value) {postId = value;}
-
-    public long getParentCommentId() {return parentCommentId;}
-    public void setParentCommentId(long value) {parentCommentId = value;}
-
     public long getCreatorId() {return creatorId;}
     public void setCreatorId(long value) {creatorId = value;}
+
+    public long getSubscriberCount() {return subscriberCount;}
+    public void setSubscriberCount(long value) {subscriberCount = value;}
 }

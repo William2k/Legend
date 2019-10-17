@@ -2,13 +2,15 @@ package com.legendApi.models.entities;
 
 import java.util.Date;
 
-public class TopicEntity {
+public class PostEntity {
     private long id;
     private String name;
     private boolean isActive;
     private Date dateCreated;
     private Date dateModified;
     private long creatorId;
+    private long groupId;
+    private long subscriberCount;
 
     public long getId() {return id;}
     public void setId(long value) {id = value;}
@@ -27,4 +29,10 @@ public class TopicEntity {
 
     public long getCreatorId() {return creatorId;}
     public void setCreatorId(long value) {creatorId = value;}
+
+    public long getGroupId() {return groupId;}
+    public void setGroupId(long value) {groupId = value;}
+
+    public long getSubscriberCount() {return subscriberCount;}
+    public void setSubscriberCount(long value) {subscriberCount = value;}
 }

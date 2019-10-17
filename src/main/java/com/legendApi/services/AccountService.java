@@ -67,7 +67,13 @@ public class AccountService {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.addRole(Role.ROLE_USER);
             user.setIsActive(true);
-            userRepository.add(user);
+
+            try {
+                userRepository.add(user);
+            } catch (Exception ex) {
+                throw new CustomHttpException("Sign up failed", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
             return jwtTokenProvider.createToken(user.getUsername(), user.getId(), user.getRoles());
         } else {
             throw new CustomHttpException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);

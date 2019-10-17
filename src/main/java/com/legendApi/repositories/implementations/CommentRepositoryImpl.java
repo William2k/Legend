@@ -5,11 +5,12 @@ import com.legendApi.models.entities.CommentEntity;
 import com.legendApi.repositories.CommentRepository;
 import com.legendApi.repositories.implementations.rowMappings.RowMappings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
+import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public class CommentRepositoryImpl implements CommentRepository {
@@ -25,10 +26,10 @@ public class CommentRepositoryImpl implements CommentRepository {
         String sql = "SELECT * FROM legend.comments" +
                 "WHERE parent_comment_id=:id";
 
-        Map<String, Long> parameters = new HashMap<>();
-        parameters.put("id", id);
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+            .addValue("id", id);
 
-        List<CommentEntity> result = customJdbc.query(sql, parameters, RowMappings::commentRowMapping);
+        List<CommentEntity> result = customJdbc.query(sql, namedParameters, RowMappings::commentRowMapping);
 
         return result;
     }
@@ -45,27 +46,37 @@ public class CommentRepositoryImpl implements CommentRepository {
         String sql = "SELECT * FROM legend.comments " +
                 "WHERE id = :id";
 
-        Map<String, Long> parameters = new HashMap<>();
-        parameters.put("id", id);
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+            .addValue("id", id);
 
-        CommentEntity result = customJdbc.queryForObject(sql, parameters, RowMappings::commentRowMapping);
+        CommentEntity result = customJdbc.queryForObject(sql, namedParameters, RowMappings::commentRowMapping);
 
         return result;
     }
 
     @Override
-    public long add(CommentEntity comment) {
-        String sql = "INSERT INTO legend.comments(content, is_active, topic_id, parent_comment_id, creator_id) " +
+    public long add(CommentEntity comment) throws SQLException {
+        String sql = "INSERT INTO legend.comments(content, is_active, post_id, parent_comment_id, creator_id) " +
                 "VALUES (:content, :isActive, :topicId, :parentCommentId, :creatorId)";
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("content", comment.getContent());
-        parameters.put("isActive", comment.getIsActive());
-        parameters.put("topicId", comment.getTopicId());
-        parameters.put("parentCommentId", comment.getParentCommentId());
-        parameters.put("creatorId", comment.getCreatorId());
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+            .addValue("content", comment.getContent())
+            .addValue("isActive", comment.getIsActive())
+            .addValue("postId", comment.getPostId())
+            .addValue("parentCommentId", comment.getParentCommentId())
+            .addValue("creatorId", comment.getCreatorId());
 
-        return customJdbc.update(sql, parameters);
+        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+
+        customJdbc.update(sql, namedParameters);
+
+        Number key = keyHolder.getKey();
+
+        if(key == null) {
+            throw new SQLException("Something went wrong while adding the entity");
+        }
+
+        return key.longValue();
     }
 
     @Override
@@ -74,12 +85,12 @@ public class CommentRepositoryImpl implements CommentRepository {
                 "SET content=:content, is_active=:isActive, date_modified=now() " +
                 "WHERE id = :id";
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("id", comment.getId());
-        parameters.put("content", comment.getContent());
-        parameters.put("isActive", comment.getIsActive());
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+            .addValue("id", comment.getId())
+            .addValue("content", comment.getContent())
+            .addValue("isActive", comment.getIsActive());
 
-        customJdbc.update(sql, parameters);
+        customJdbc.update(sql, namedParameters);
     }
 
     @Override
@@ -88,9 +99,9 @@ public class CommentRepositoryImpl implements CommentRepository {
                 "SET is_active = false " +
                 "WHERE id = :id";
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("id", id);
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+        .addValue("id", id);
 
-        customJdbc.update(sql, parameters);
+        customJdbc.update(sql, namedParameters);
     }
 }

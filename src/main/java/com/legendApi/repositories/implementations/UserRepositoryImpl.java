@@ -5,11 +5,12 @@ import com.legendApi.models.entities.UserEntity;
 import com.legendApi.repositories.UserRepository;
 import com.legendApi.repositories.implementations.rowMappings.RowMappings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
+import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
@@ -25,10 +26,10 @@ public class UserRepositoryImpl implements UserRepository {
         String sql = "SELECT * FROM legend.users " +
                 "WHERE normalised_username = :username";
 
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("username", username.toUpperCase());
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+            .addValue("username", username.toUpperCase());
 
-        UserEntity result = customJdbc.queryForObject(sql, parameters, RowMappings::userRowMapping);
+        UserEntity result = customJdbc.queryForObject(sql, namedParameters, RowMappings::userRowMapping);
 
         return result;
     }
@@ -38,10 +39,10 @@ public class UserRepositoryImpl implements UserRepository {
         String sql = "SELECT EXISTS (SELECT id FROM legend.users " +
                 "WHERE normalised_username = :username)";
 
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("username", username.toUpperCase());
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+            .addValue("username", username.toUpperCase());
 
-        boolean result = customJdbc.queryForObject(sql, parameters, boolean.class); // ignore error postgresql will always true or false for this
+        boolean result = customJdbc.queryForObject(sql, namedParameters, boolean.class); // ignore error postgresql will always return true or false for this
 
         return result;
     }
@@ -58,30 +59,40 @@ public class UserRepositoryImpl implements UserRepository {
         String sql = "SELECT * FROM legend.users " +
                 "WHERE id = :id";
 
-        Map<String, Long> parameters = new HashMap<>();
-        parameters.put("id", id);
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+            .addValue("id", id);
 
-        UserEntity result = customJdbc.queryForObject(sql, parameters, RowMappings::userRowMapping);
+        UserEntity result = customJdbc.queryForObject(sql, namedParameters, RowMappings::userRowMapping);
 
         return result;
     }
 
     @Override
-    public long add(UserEntity user) {
+    public long add(UserEntity user) throws SQLException {
         String sql = "INSERT INTO legend.users(username, normalised_username, first_name, last_name, email_address, password, roles, is_active) " +
                 "VALUES (:username, :normalisedUsername, :firstName, :lastName, :emailAddress, :password, :roles, :isActive)";
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("username", user.getUsername());
-        parameters.put("normalisedUsername", user.getUsername().toUpperCase());
-        parameters.put("firstName", user.getFirstName());
-        parameters.put("lastName", user.getLastName());
-        parameters.put("emailAddress", user.getEmailAddress());
-        parameters.put("password", user.getPassword());
-        parameters.put("roles", user.getStringRoles());
-        parameters.put("isActive", user.getIsActive());
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("username", user.getUsername())
+                .addValue("normalisedUsername", user.getUsername().toUpperCase())
+                .addValue("firstName", user.getFirstName())
+                .addValue("lastName", user.getLastName())
+                .addValue("emailAddress", user.getEmailAddress())
+                .addValue("password", user.getPassword())
+                .addValue("roles", user.getStringRoles())
+                .addValue("isActive", user.getIsActive());
 
-        return customJdbc.update(sql, parameters);
+        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+
+        customJdbc.update(sql, namedParameters, keyHolder);
+
+        Number key = keyHolder.getKey();
+
+        if(key == null) {
+            throw new SQLException("Something went wrong while adding the entity");
+        }
+
+        return key.longValue();
     }
 
     @Override
@@ -90,16 +101,16 @@ public class UserRepositoryImpl implements UserRepository {
                 "SET first_name=:firstName, last_name=:lastName, email_address=:emailAddress, password=:password, roles=:roles, is_active=:isActive, date_modified=now() " +
                 "WHERE id = :id";
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("id", user.getId());
-        parameters.put("firstName", user.getFirstName());
-        parameters.put("lastName", user.getLastName());
-        parameters.put("emailAddress", user.getEmailAddress());
-        parameters.put("password", user.getPassword());
-        parameters.put("roles", user.getStringRoles());
-        parameters.put("isActive", user.getIsActive());
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("id", user.getId())
+                .addValue("firstName", user.getFirstName())
+                .addValue("lastName", user.getLastName())
+                .addValue("emailAddress", user.getEmailAddress())
+                .addValue("password", user.getPassword())
+                .addValue("roles", user.getStringRoles())
+                .addValue("isActive", user.getIsActive());
 
-        customJdbc.update(sql, parameters);
+        customJdbc.update(sql, namedParameters);
     }
 
     @Override
@@ -108,9 +119,9 @@ public class UserRepositoryImpl implements UserRepository {
                 "SET is_active = false " +
                 "WHERE id = :id";
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("id", id);
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+            .addValue("id", id);
 
-        customJdbc.update(sql, parameters);
+        customJdbc.update(sql, namedParameters);
     }
 }

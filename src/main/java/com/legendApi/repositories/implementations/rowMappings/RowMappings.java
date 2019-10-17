@@ -1,7 +1,8 @@
 package com.legendApi.repositories.implementations.rowMappings;
 
 import com.legendApi.models.entities.CommentEntity;
-import com.legendApi.models.entities.TopicEntity;
+import com.legendApi.models.entities.GroupEntity;
+import com.legendApi.models.entities.PostEntity;
 import com.legendApi.models.entities.UserEntity;
 
 import java.sql.Array;
@@ -9,22 +10,38 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class RowMappings {
-    public static TopicEntity topicRowMapping(ResultSet rs, int rowNum) throws SQLException {
-        TopicEntity topic = new TopicEntity();
-        topic.setId(rs.getLong("id"));
-        topic.setName(rs.getString("name"));
-        topic.setCreatorId(rs.getInt("creator_id"));
-        topic.setDateCreated(rs.getDate("date_created"));
-        topic.setDateModified(rs.getDate("date_modified"));
-        topic.setIsActive(rs.getBoolean("is_active"));
-        return topic;
+    public static GroupEntity groupRowMapping(ResultSet rs, int rowNum) throws SQLException {
+        GroupEntity group = new GroupEntity();
+        group.setId(rs.getLong("id"));
+        group.setName(rs.getString("name"));
+        group.setCreatorId(rs.getInt("creator_id"));
+        group.setDateCreated(rs.getDate("date_created"));
+        group.setDateModified(rs.getDate("date_modified"));
+        group.setIsActive(rs.getBoolean("is_active"));
+        group.setSubscriberCount(rs.getInt("subscriber_count"));
+
+        return group;
+    }
+
+    public static PostEntity postRowMapping(ResultSet rs, int rowNum) throws SQLException {
+        PostEntity post = new PostEntity();
+        post.setId(rs.getLong("id"));
+        post.setName(rs.getString("name"));
+        post.setCreatorId(rs.getInt("creator_id"));
+        post.setDateCreated(rs.getDate("date_created"));
+        post.setDateModified(rs.getDate("date_modified"));
+        post.setGroupId(rs.getInt("group_id"));
+        post.setIsActive(rs.getBoolean("is_active"));
+        post.setSubscriberCount(rs.getInt("subscriber_count"));
+
+        return post;
     }
 
     public static CommentEntity commentRowMapping(ResultSet rs, int rowNum) throws SQLException {
         CommentEntity comment = new CommentEntity();
         comment.setId(rs.getLong("id"));
         comment.setContent(rs.getString("content"));
-        comment.setTopicId(rs.getInt("topic_id"));
+        comment.setPostId(rs.getInt("post_id"));
         comment.setCreatorId(rs.getInt("creator_id"));
         comment.setParentCommentId(rs.getInt("parent_comment_id"));
         comment.setDateCreated(rs.getDate("date_created"));
