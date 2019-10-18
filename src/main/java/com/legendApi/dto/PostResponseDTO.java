@@ -14,7 +14,8 @@ public class PostResponseDTO {
 
     private String name;
     private long subscriberCount;
-    private long postsTodayCount;
+    private long commentsTodayCount;
+    private long commentsCount;
     private boolean isActive;
 
     public String getName() {return name;}
@@ -23,8 +24,11 @@ public class PostResponseDTO {
     public long getSubscriberCount() {return subscriberCount;}
     public void setSubscriberCount(long value) {subscriberCount = value;}
 
-    public long getPostsTodayCount() {return postsTodayCount;}
-    public void setPostsTodayCount(long value) {postsTodayCount = value;}
+    public long getCommentsTodayCount() {return commentsTodayCount;}
+    public void setCommentsTodayCount(long value) {commentsTodayCount = value;}
+
+    public long getCommentsCount() { return commentsCount; }
+    public void setCommentsCount(long value) { commentsCount = value; }
 
     public boolean getIsActive() {return  isActive;}
     public void  setIsActive(boolean value) {isActive = value;}

@@ -52,7 +52,7 @@ public class GroupRepositoryImpl implements GroupRepository {
 
     @Override
     public long subscribe(long userId, long groupId) throws SQLException {
-        String sql = "INSERT INTO legend.groups(user_id, group_id, is_active)" +
+        String sql = "INSERT INTO legend.users_groups_subs(user_id, group_id, is_active)" +
                 "VALUES (:userId, :groupId, :isActive)";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
@@ -149,13 +149,15 @@ public class GroupRepositoryImpl implements GroupRepository {
 
     @Override
     public long add(GroupEntity group) throws SQLException {
-        String sql = "INSERT INTO legend.groups(name, is_active, creator_id) " +
-                "VALUES (:name, :isActive, :creatorId)";
+        String sql = "INSERT INTO legend.groups(name, description, is_active, creator_id, tags) " +
+                "VALUES (:name, :description, :isActive, :creatorId, :tags)";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
                 .addValue("name", group.getName())
+                .addValue("description", group.getDescription())
                 .addValue("isActive", group.getIsActive())
-                .addValue("creatorId", group.getCreatorId());
+                .addValue("creatorId", group.getCreatorId())
+                .addValue("tags", group.getTags());
 
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -173,13 +175,15 @@ public class GroupRepositoryImpl implements GroupRepository {
     @Override
     public void update(GroupEntity group) {
         String sql = "UPDATE legend.groups " +
-                "SET name=:name, is_active=:isActive, date_modified=now() " +
+                "SET name=:name, description=:description, is_active=:isActive, tags=:tags, date_modified=now() " +
                 "WHERE id = :id";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
-            .addValue("id", group.getId())
-            .addValue("name", group.getName())
-            .addValue("isActive", group.getIsActive());
+                .addValue("id", group.getId())
+                .addValue("name", group.getName())
+                .addValue("description", group.getDescription())
+                .addValue("isActive", group.getIsActive())
+                .addValue("tags", group.getTags());
 
         customJdbc.update(sql, namedParameters);
     }

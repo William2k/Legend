@@ -10,6 +10,7 @@ public class PostEntity {
     private Date dateModified;
     private long creatorId;
     private long groupId;
+    private long openingCommentId;
     private long subscriberCount;
 
     public long getId() {return id;}
@@ -32,6 +33,9 @@ public class PostEntity {
 
     public long getGroupId() {return groupId;}
     public void setGroupId(long value) {groupId = value;}
+
+    public long getOpeningCommentId() {return openingCommentId;}
+    public void setOpeningCommentId(long value) {openingCommentId = value;}
 
     public long getSubscriberCount() {return subscriberCount;}
     public void setSubscriberCount(long value) {subscriberCount = value;}

@@ -9,17 +9,24 @@ public class GroupResponseDTO {
 
     public GroupResponseDTO(GroupEntity group) {
         setName(group.getName());
+        setDescription(group.getDescription());
         setIsActive(group.getIsActive());
         setSubscriberCount(group.getSubscriberCount());
+        setTags(group.getTags());
     }
 
     private String name;
+    private String description;
     private boolean isActive;
     private long postCount;
     private long subscriberCount;
+    private String[] tags;
 
     public String getName() {return name;}
     public void setName(String value) {name = value;}
+
+    public String getDescription() {return description;}
+    public void setDescription(String value) {description = value;}
 
     public boolean getIsActive() {return  isActive;}
     public void  setIsActive(boolean value) {isActive = value;}
@@ -29,4 +36,7 @@ public class GroupResponseDTO {
 
     public long getPostCount() {return postCount;}
     public void setPostCount(long value) {postCount = value;}
+
+    public String[] getTags() {return tags;}
+    public void setTags(String[] value) {tags = value;}
 }

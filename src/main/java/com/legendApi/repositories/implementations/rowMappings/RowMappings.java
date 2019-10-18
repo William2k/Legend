@@ -14,11 +14,13 @@ public class RowMappings {
         GroupEntity group = new GroupEntity();
         group.setId(rs.getLong("id"));
         group.setName(rs.getString("name"));
+        group.setDescription(rs.getString("description"));
         group.setCreatorId(rs.getInt("creator_id"));
         group.setDateCreated(rs.getDate("date_created"));
         group.setDateModified(rs.getDate("date_modified"));
         group.setIsActive(rs.getBoolean("is_active"));
         group.setSubscriberCount(rs.getInt("subscriber_count"));
+        group.setTags((String[])rs.getArray("tags").getArray());
 
         return group;
     }
@@ -31,6 +33,7 @@ public class RowMappings {
         post.setDateCreated(rs.getDate("date_created"));
         post.setDateModified(rs.getDate("date_modified"));
         post.setGroupId(rs.getInt("group_id"));
+        post.setOpeningCommentId(rs.getInt("opening_comment_id"));
         post.setIsActive(rs.getBoolean("is_active"));
         post.setSubscriberCount(rs.getInt("subscriber_count"));
 
@@ -58,10 +61,7 @@ public class RowMappings {
         user.setLastName(rs.getString("last_name"));
         user.setEmailAddress(rs.getString("email_address"));
         user.setPassword(rs.getString("password"));
-
-        Array roles = rs.getArray("roles");
-
-        user.setStringRoles((String[]) roles.getArray());
+        user.setStringRoles((String[])rs.getArray("roles").getArray());
         user.setDateCreated(rs.getDate("date_created"));
         user.setDateModified(rs.getDate("date_modified"));
         user.setIsActive(rs.getBoolean("is_active"));
