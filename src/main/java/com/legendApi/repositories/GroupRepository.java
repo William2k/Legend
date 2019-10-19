@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface GroupRepository extends CRUDRepository<GroupEntity> {
-    long subscribe(long userId, long groupId) throws SQLException;
+    void subscribe(long userId, long groupId) throws SQLException;
 
     long getPostCount(long groupId);
 

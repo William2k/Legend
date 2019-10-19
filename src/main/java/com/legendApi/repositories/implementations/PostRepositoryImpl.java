@@ -96,7 +96,7 @@ public class PostRepositoryImpl implements PostRepository {
 
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
-        customJdbc.update(sql, namedParameters);
+        customJdbc.update(sql, namedParameters, keyHolder, new String[] { "id" });
 
         Number key = keyHolder.getKey();
 

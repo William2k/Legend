@@ -84,7 +84,7 @@ public class UserRepositoryImpl implements UserRepository {
 
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
-        customJdbc.update(sql, namedParameters, keyHolder);
+        customJdbc.update(sql, namedParameters, keyHolder, new String[] { "id" });
 
         Number key = keyHolder.getKey();
 

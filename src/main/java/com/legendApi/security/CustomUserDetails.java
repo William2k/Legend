@@ -26,7 +26,7 @@ public class CustomUserDetails implements UserDetailsService {
         return buildUserDetails(user);
     }
 
-    public UserDetails loadUserById(int id) {
+    public UserDetails loadUserById(long id) {
         final User user = new User(userRepository.getById(id));
 
         return buildUserDetails(user);
@@ -37,14 +37,14 @@ public class CustomUserDetails implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
 
-        return org.springframework.security.core.userdetails.User//
-                .withUsername(user.getUsername())//
-                .password(user.getPassword())//
-                .authorities(user.getRoles())//
-                .accountExpired(false)//
-                .accountLocked(false)//
-                .credentialsExpired(false)//
-                .disabled(false)//
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getUsername())
+                .password(user.getPassword())
+                .authorities(user.getRoles())
+                .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .disabled(false)
                 .build();
     }
 }

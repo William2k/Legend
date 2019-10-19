@@ -51,7 +51,7 @@ public class GroupRepositoryImpl implements GroupRepository {
     }
 
     @Override
-    public long subscribe(long userId, long groupId) throws SQLException {
+    public void subscribe(long userId, long groupId) {
         String sql = "INSERT INTO legend.users_groups_subs(user_id, group_id, is_active)" +
                 "VALUES (:userId, :groupId, :isActive)";
 
@@ -60,17 +60,7 @@ public class GroupRepositoryImpl implements GroupRepository {
             .addValue("groupId", groupId)
             .addValue("isActive", true);
 
-        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-
-        customJdbc.update(sql, namedParameters, keyHolder);
-
-        Number key = keyHolder.getKey();
-
-        if(key == null) {
-            throw new SQLException("Something went wrong while adding the entity");
-        }
-
-        return key.longValue();
+        customJdbc.update(sql, namedParameters);
     }
 
     @Override
@@ -161,7 +151,7 @@ public class GroupRepositoryImpl implements GroupRepository {
 
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
-        customJdbc.update(sql, namedParameters, keyHolder);
+        customJdbc.update(sql, namedParameters, keyHolder, new String[] { "id" });
 
         Number key = keyHolder.getKey();
 

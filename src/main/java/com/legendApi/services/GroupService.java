@@ -5,6 +5,7 @@ import com.legendApi.dto.GroupResponseDTO;
 import com.legendApi.models.AddGroup;
 import com.legendApi.models.entities.GroupEntity;
 import com.legendApi.repositories.GroupRepository;
+import com.legendApi.security.helpers.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ public class GroupService {
         groupEntity.setName(group.getName());
         groupEntity.setDescription(group.getDescription());
         groupEntity.setTags(group.getTags());
+        groupEntity.setCreatorId(CurrentUser.getId());
 
         try {
             groupRepository.add(groupEntity);
