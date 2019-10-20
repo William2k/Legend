@@ -23,6 +23,19 @@ public class GroupRepositoryImpl implements GroupRepository {
     }
 
     @Override
+    public boolean existsByName(String name) {
+        String sql = "SELECT EXISTS (SELECT id FROM legend.groups " +
+                "WHERE UPPER(name) = :name)";
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("name", name.toUpperCase());
+
+        boolean result = customJdbc.queryForObject(sql, namedParameters, boolean.class); // ignore error postgresql will always return true or false for this
+
+        return result;
+    }
+
+    @Override
     public long getPostCount(long groupId) {
         String sql = "SELECT COUNT(p.*) " +
                 "FROM legend.groups AS g JOIN legend.posts AS p ON g.id = p.group_id " +

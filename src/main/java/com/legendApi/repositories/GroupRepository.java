@@ -9,6 +9,8 @@ import java.util.List;
 public interface GroupRepository extends CRUDRepository<GroupEntity> {
     void subscribe(long userId, long groupId) throws SQLException;
 
+    boolean existsByName(String name);
+
     long getPostCount(long groupId);
 
     long getPostCount(String groupName);

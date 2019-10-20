@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +37,12 @@ public class GroupService {
    }
 
    public void addGroup(AddGroup group) {
+        boolean exists = groupRepository.existsByName(group.getName());
+
+        if(exists) {
+            throw new CustomHttpException("Group already exists", HttpStatus.CONFLICT);
+        }
+
         GroupEntity groupEntity = new GroupEntity();
         groupEntity.setName(group.getName());
         groupEntity.setDescription(group.getDescription());
