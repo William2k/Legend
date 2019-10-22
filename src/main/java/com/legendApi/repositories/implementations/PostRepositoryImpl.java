@@ -24,7 +24,7 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public List<PostEntity> getAllByCreatorId(long creatorId) {
-        String sql = "SELECT * FROM legend.posts" +
+        String sql = "SELECT * FROM legend.posts " +
                 "WHERE creator_id = :id";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
@@ -38,7 +38,7 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public List<UserEntity> getSubscribedUsers(long topicId) {
         String sql = "SELECT u.* " +
-                "FROM legend.users AS u JOIN legend.users_posts_subs AS ups ON u.id = ups.user_id" +
+                "FROM legend.users AS u JOIN legend.users_posts_subs AS ups ON u.id = ups.user_id " +
                 "WHERE ups.topic_id = :id";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
@@ -52,7 +52,7 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public List<PostEntity> getSubscribedPosts(long userId) {
         String sql = "SELECT p.* " +
-                "FROM legend.posts AS p JOIN legend.users_topics AS ut ON p.id = ut.topic_id" +
+                "FROM legend.posts AS p JOIN legend.users_topics AS ut ON p.id = ut.topic_id " +
                 "WHERE ut.user_id = :id";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
@@ -123,7 +123,7 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public void delete(long id) {
-        String sql = "UPDATE legend.posts" +
+        String sql = "UPDATE legend.posts " +
                 "SET is_active = false " +
                 "WHERE id = :id";
 

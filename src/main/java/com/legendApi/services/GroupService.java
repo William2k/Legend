@@ -23,6 +23,27 @@ public class GroupService {
         this.groupRepository = groupRepository;
     }
 
+    public GroupResponseDTO getByName(String name) {
+        GroupResponseDTO group = new GroupResponseDTO(groupRepository.getGroupByName(name));
+
+        group.setPostCount(groupRepository.getPostCount(group.getName()));
+
+        return group;
+    }
+
+    public List<GroupResponseDTO> getUserGroups() {
+        List<GroupEntity> groups = groupRepository.getAllByCreatorId(CurrentUser.getId());
+
+        List<GroupResponseDTO> groupDtos = groups
+                .stream().map(GroupResponseDTO::new)
+                .collect(Collectors.toList());
+
+        groupDtos.forEach(groupResponseDTO ->
+                groupResponseDTO.setPostCount( groupRepository.getPostCount(groupResponseDTO.getName()) ));
+
+        return groupDtos;
+    }
+
    public List<GroupResponseDTO> getAll() {
         List<GroupEntity> groups = groupRepository.getAll();
 
@@ -37,14 +58,20 @@ public class GroupService {
    }
 
    public void addGroup(AddGroup group) {
-        boolean exists = groupRepository.existsByName(group.getName());
+        String name = group.getName();
+
+        if(name.contains(" ")) {
+            throw new CustomHttpException("Group name includes spaces", HttpStatus.BAD_REQUEST);
+        }
+
+        boolean exists = groupRepository.existsByName(name);
 
         if(exists) {
             throw new CustomHttpException("Group already exists", HttpStatus.CONFLICT);
         }
 
         GroupEntity groupEntity = new GroupEntity();
-        groupEntity.setName(group.getName());
+        groupEntity.setName(name);
         groupEntity.setDescription(group.getDescription());
         groupEntity.setTags(group.getTags());
         groupEntity.setCreatorId(CurrentUser.getId());

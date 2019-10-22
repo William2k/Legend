@@ -115,7 +115,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void delete(long id) {
-        String sql = "UPDATE legend.users" +
+        String sql = "UPDATE legend.users " +
                 "SET is_active = false " +
                 "WHERE id = :id";
 

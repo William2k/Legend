@@ -65,7 +65,7 @@ public class GroupRepositoryImpl implements GroupRepository {
 
     @Override
     public void subscribe(long userId, long groupId) {
-        String sql = "INSERT INTO legend.users_groups_subs(user_id, group_id, is_active)" +
+        String sql = "INSERT INTO legend.users_groups_subs(user_id, group_id, is_active) " +
                 "VALUES (:userId, :groupId, :isActive)";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
@@ -78,7 +78,7 @@ public class GroupRepositoryImpl implements GroupRepository {
 
     @Override
     public GroupEntity getGroupByName(String name) {
-        String sql = "SELECT * FROM legend.groups" +
+        String sql = "SELECT * FROM legend.groups " +
                 "WHERE name = :name";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
@@ -91,7 +91,7 @@ public class GroupRepositoryImpl implements GroupRepository {
 
     @Override
     public List<GroupEntity> getAllByCreatorId(long creatorId) {
-        String sql = "SELECT * FROM legend.groups" +
+        String sql = "SELECT * FROM legend.groups " +
                 "WHERE creator_id = :id";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
@@ -105,7 +105,7 @@ public class GroupRepositoryImpl implements GroupRepository {
     @Override
     public List<UserEntity> getSubscribedUsers(long groupId) {
         String sql = "SELECT u.* " +
-                "FROM legend.users AS u JOIN legend.users_groups AS ug ON u.id = ug.user_id" +
+                "FROM legend.users AS u JOIN legend.users_groups AS ug ON u.id = ug.user_id " +
                 "WHERE ug.group_id = :id";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
@@ -119,7 +119,7 @@ public class GroupRepositoryImpl implements GroupRepository {
     @Override
     public List<GroupEntity> getSubscribedGroups(long userId) {
         String sql = "SELECT g.* " +
-                "FROM legend.groups AS g JOIN legend.users_groups AS ug ON g.id = ug.topic_id" +
+                "FROM legend.groups AS g JOIN legend.users_groups AS ug ON g.id = ug.topic_id " +
                 "WHERE ug.user_id = :id";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
@@ -193,7 +193,7 @@ public class GroupRepositoryImpl implements GroupRepository {
 
     @Override
     public void delete(long id) {
-        String sql = "UPDATE legend.groups" +
+        String sql = "UPDATE legend.groups " +
                 "SET is_active = false " +
                 "WHERE id = :id";
 

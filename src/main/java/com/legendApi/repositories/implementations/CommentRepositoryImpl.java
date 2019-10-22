@@ -23,7 +23,7 @@ public class CommentRepositoryImpl implements CommentRepository {
 
     @Override
     public List<CommentEntity> getChildComments(long id) {
-        String sql = "SELECT * FROM legend.comments" +
+        String sql = "SELECT * FROM legend.comments " +
                 "WHERE parent_comment_id=:id";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
@@ -95,7 +95,7 @@ public class CommentRepositoryImpl implements CommentRepository {
 
     @Override
     public void delete(long id) {
-        String sql = "UPDATE legend.comments" +
+        String sql = "UPDATE legend.comments " +
                 "SET is_active = false " +
                 "WHERE id = :id";
 
