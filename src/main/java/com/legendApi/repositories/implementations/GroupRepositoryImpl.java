@@ -137,6 +137,19 @@ public class GroupRepositoryImpl implements GroupRepository {
         return result;
     }
 
+    public List<GroupEntity> getAll(int limit, int subset) {
+        String sql = "SELECT * FROM legend.groups " +
+                "ORDER BY s " +
+                "LIMIT :limit";
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("limit", limit);
+
+        List<GroupEntity> result = customJdbc.query(sql, RowMappings::groupRowMapping);
+
+        return result;
+    }
+
     @Override
     public GroupEntity getById(long id) {
         String sql = "SELECT * FROM legend.groups " +

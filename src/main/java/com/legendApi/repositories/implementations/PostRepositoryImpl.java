@@ -85,13 +85,17 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public long add(PostEntity post) throws SQLException {
-        String sql = "INSERT INTO legend.posts(name, description, is_active, open_comment_id, creator_id) " +
-                "VALUES (:name, :isActive, :openCommentId, :creatorId)";
+        String sql = "INSERT INTO legend.posts(name, description, is_active, open_comment_id, group_id, creator_id) " +
+                "VALUES (:name, :isActive, :openCommentId, :groupId, :creatorId); " +
+                "UPDATE legend.groups " +
+                "SET post_count = post_count + 1 " +
+                "WHERE id = :groupId";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
                 .addValue("name", post.getName())
                 .addValue("isActive", post.getIsActive())
                 .addValue("openCommentId", post.getOpeningCommentId())
+                .addValue("groupId", post.getGroupId())
                 .addValue("creatorId", post.getCreatorId());
 
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
@@ -110,13 +114,12 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public void update(PostEntity post) {
         String sql = "UPDATE legend.posts " +
-                "SET name=:name, is_active=:isActive, date_modified=now() " +
+                "SET name=:name, date_modified=now() " +
                 "WHERE id = :id";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
             .addValue("id", post.getId())
-            .addValue("name", post.getName())
-            .addValue("isActive", post.getIsActive());
+            .addValue("name", post.getName());
 
         customJdbc.update(sql, namedParameters);
     }
@@ -125,7 +128,10 @@ public class PostRepositoryImpl implements PostRepository {
     public void delete(long id) {
         String sql = "UPDATE legend.posts " +
                 "SET is_active = false " +
-                "WHERE id = :id";
+                "WHERE id = :id;"  +
+                "UPDATE legend.groups " +
+                "SET post_count = post_count - 1 " +
+                "WHERE id = (SELECT group_id FROM legend.posts WHERE id = :id)";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
             .addValue("id", id);

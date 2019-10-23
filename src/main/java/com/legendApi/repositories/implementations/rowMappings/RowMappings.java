@@ -19,6 +19,7 @@ public class RowMappings {
         group.setDateCreated(rs.getDate("date_created"));
         group.setDateModified(rs.getDate("date_modified"));
         group.setIsActive(rs.getBoolean("is_active"));
+        group.setPostCount(rs.getInt("post_count"));
         group.setSubscriberCount(rs.getInt("subscriber_count"));
         group.setTags((String[])rs.getArray("tags").getArray());
 
@@ -36,6 +37,7 @@ public class RowMappings {
         post.setOpeningCommentId(rs.getInt("opening_comment_id"));
         post.setIsActive(rs.getBoolean("is_active"));
         post.setSubscriberCount(rs.getInt("subscriber_count"));
+        post.setCommentCount(rs.getInt("comment_count"));
 
         return post;
     }

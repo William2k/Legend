@@ -57,6 +57,19 @@ public class GroupService {
         return groupDtos;
    }
 
+    public List<GroupResponseDTO> getAll(int limit, int subset) {
+        List<GroupEntity> groups = groupRepository.getAll();
+
+        List<GroupResponseDTO> groupDtos = groups
+                .stream().map(GroupResponseDTO::new)
+                .collect(Collectors.toList());
+
+        groupDtos.forEach(groupResponseDTO ->
+                groupResponseDTO.setPostCount( groupRepository.getPostCount(groupResponseDTO.getName()) ));
+
+        return groupDtos;
+    }
+
    public void addGroup(AddGroup group) {
         String name = group.getName();
 

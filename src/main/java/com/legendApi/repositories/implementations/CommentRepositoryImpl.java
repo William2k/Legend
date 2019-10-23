@@ -57,7 +57,10 @@ public class CommentRepositoryImpl implements CommentRepository {
     @Override
     public long add(CommentEntity comment) throws SQLException {
         String sql = "INSERT INTO legend.comments(content, is_active, post_id, parent_comment_id, creator_id) " +
-                "VALUES (:content, :isActive, :topicId, :parentCommentId, :creatorId)";
+                "VALUES (:content, :isActive, :postId, :parentCommentId, :creatorId);" +
+                "UPDATE legend.posts " +
+                "SET comment_count = comment_count + 1 " +
+                "WHERE id = :postId";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
             .addValue("content", comment.getContent())
@@ -97,7 +100,10 @@ public class CommentRepositoryImpl implements CommentRepository {
     public void delete(long id) {
         String sql = "UPDATE legend.comments " +
                 "SET is_active = false " +
-                "WHERE id = :id";
+                "WHERE id = :id;" +
+                "UPDATE legend.posts " +
+                "SET comment_count = comment_count - 1 " +
+                "WHERE id = (SELECT post_id FROM comments WHERE id = :id)";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
         .addValue("id", id);

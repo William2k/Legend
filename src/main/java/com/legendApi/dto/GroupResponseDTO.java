@@ -20,6 +20,7 @@ public class GroupResponseDTO {
     private boolean isActive;
     private long postCount;
     private long subscriberCount;
+    private long postsTodayCount;
     private String[] tags;
 
     public String getName() {return name;}
@@ -36,6 +37,9 @@ public class GroupResponseDTO {
 
     public long getPostCount() {return postCount;}
     public void setPostCount(long value) {postCount = value;}
+
+    public long getPostsTodayCount() { return postsTodayCount; }
+    public void setPostsTodayCount(long value) { postsTodayCount = value; }
 
     public String[] getTags() {return tags;}
     public void setTags(String[] value) {tags = value;}

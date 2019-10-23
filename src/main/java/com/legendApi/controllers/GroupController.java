@@ -4,6 +4,7 @@ import com.legendApi.dto.GroupResponseDTO;
 import com.legendApi.models.AddGroup;
 import com.legendApi.services.GroupService;
 import com.legendApi.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.RequestPath;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ public class GroupController {
     private final UserService userService;
     private final GroupService groupService;
 
+    @Autowired
     public GroupController(UserService userService, GroupService groupService) {
         this.userService = userService;
         this.groupService = groupService;
@@ -29,7 +31,7 @@ public class GroupController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<GroupResponseDTO> getGroups() {
+    public List<GroupResponseDTO> getGroups(@RequestParam("limit") int limit, @RequestParam("subset") int subset) {
         List<GroupResponseDTO> groups = groupService.getAll();
 
         return groups;

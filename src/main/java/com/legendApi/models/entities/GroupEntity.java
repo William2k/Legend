@@ -11,6 +11,8 @@ public class GroupEntity {
     private Date dateModified;
     private long creatorId;
     private long subscriberCount;
+    private long postCount;
+    private long postsTodayCount;
     private String[] tags;
 
     public long getId() {return id;}
@@ -36,6 +38,12 @@ public class GroupEntity {
 
     public long getSubscriberCount() {return subscriberCount;}
     public void setSubscriberCount(long value) {subscriberCount = value;}
+
+    public long getPostCount() {return postCount;}
+    public void setPostCount(long value) {postCount = value;}
+
+    public long getPostsTodayCount() {return postsTodayCount;}
+    public void setPostsTodayCount(long value) {postsTodayCount = value;}
 
     public String[] getTags() {return tags;}
     public void setTags(String[] value) {tags = value;}

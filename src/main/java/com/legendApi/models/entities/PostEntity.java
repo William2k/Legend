@@ -12,6 +12,8 @@ public class PostEntity {
     private long groupId;
     private long openingCommentId;
     private long subscriberCount;
+    private long commentCount;
+    private long commentsTodayComment;
 
     public long getId() {return id;}
     public void setId(long value) {id = value;}
@@ -39,4 +41,10 @@ public class PostEntity {
 
     public long getSubscriberCount() {return subscriberCount;}
     public void setSubscriberCount(long value) {subscriberCount = value;}
+
+    public long getCommentCount() {return commentCount;}
+    public void setCommentCount(long value) {commentCount = value;}
+
+    public long getCommentsTodayComment() { return commentsTodayComment;}
+    public void setCommentsTodayComment(long value) { commentsTodayComment = value; }
 }
