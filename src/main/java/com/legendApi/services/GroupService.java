@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,8 +56,8 @@ public class GroupService {
         return groupDtos;
    }
 
-    public List<GroupResponseDTO> getAll(int limit, int subset) {
-        List<GroupEntity> groups = groupRepository.getAll();
+    public List<GroupResponseDTO> getAll(int limit, long lastCount, boolean initial, boolean asc) {
+        List<GroupEntity> groups = groupRepository.getAll(limit, lastCount, initial, asc);
 
         List<GroupResponseDTO> groupDtos = groups
                 .stream().map(GroupResponseDTO::new)
@@ -88,6 +87,7 @@ public class GroupService {
         groupEntity.setDescription(group.getDescription());
         groupEntity.setTags(group.getTags());
         groupEntity.setCreatorId(CurrentUser.getId());
+        groupEntity.setIsActive(true);
 
         try {
             groupRepository.add(groupEntity);

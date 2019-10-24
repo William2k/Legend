@@ -98,7 +98,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void update(UserEntity user) {
         String sql = "UPDATE legend.users " +
-                "SET first_name=:firstName, last_name=:lastName, email_address=:emailAddress, password=:password, roles=:roles, is_active=:isActive, date_modified=now() " +
+                "SET first_name=:firstName, last_name=:lastName, email_address=:emailAddress, password=:password, roles=:roles, date_modified=now() " +
                 "WHERE id = :id";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
@@ -107,8 +107,7 @@ public class UserRepositoryImpl implements UserRepository {
                 .addValue("lastName", user.getLastName())
                 .addValue("emailAddress", user.getEmailAddress())
                 .addValue("password", user.getPassword())
-                .addValue("roles", user.getStringRoles())
-                .addValue("isActive", user.getIsActive());
+                .addValue("roles", user.getStringRoles());
 
         customJdbc.update(sql, namedParameters);
     }

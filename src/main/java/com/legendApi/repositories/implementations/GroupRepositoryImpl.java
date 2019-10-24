@@ -5,12 +5,15 @@ import com.legendApi.models.entities.GroupEntity;
 import com.legendApi.models.entities.UserEntity;
 import com.legendApi.repositories.GroupRepository;
 import com.legendApi.repositories.implementations.rowMappings.RowMappings;
+import jdk.internal.jline.internal.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -78,11 +81,19 @@ public class GroupRepositoryImpl implements GroupRepository {
 
     @Override
     public GroupEntity getGroupByName(String name) {
-        String sql = "SELECT * FROM legend.groups " +
-                "WHERE name = :name";
+        String sql = "SELECT g.*, " +
+                "(SELECT COUNT(*) FROM legend.posts AS p " +
+                "WHERE p.group_id = g.id " +
+                "AND p.date_created BETWEEN NOW() - INTERVAL '24 HOURS' AND NOW() " +
+                "AND p.is_active = true) " +
+                "AS posts_today " +
+                "FROM legend.groups AS g " +
+                "WHERE g.is_active = true " +
+                "AND UPPER(name) = :name " +
+                "ORDER BY posts_today, g.id";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
-            .addValue("name", name);
+            .addValue("name", name.toUpperCase());
 
         GroupEntity result = customJdbc.queryForObject(sql, namedParameters, RowMappings::groupRowMapping);
 
@@ -132,28 +143,60 @@ public class GroupRepositoryImpl implements GroupRepository {
 
     @Override
     public List<GroupEntity> getAll() {
-        List<GroupEntity> result = customJdbc.query("SELECT * FROM legend.groups", RowMappings::groupRowMapping);
-
-        return result;
-    }
-
-    public List<GroupEntity> getAll(int limit, int subset) {
-        String sql = "SELECT * FROM legend.groups " +
-                "ORDER BY s " +
-                "LIMIT :limit";
-
-        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
-                .addValue("limit", limit);
+        String sql = "SELECT g.*, " +
+                "(SELECT COUNT(*) FROM legend.posts AS p " +
+                "WHERE p.group_id = g.id " +
+                "AND p.date_created BETWEEN NOW() - INTERVAL '24 HOURS' AND NOW() " +
+                "AND p.is_active = true) " +
+                "AS posts_today " +
+                "FROM legend.groups AS g " +
+                "WHERE g.is_active = true " +
+                "ORDER BY posts_today, g.id";
 
         List<GroupEntity> result = customJdbc.query(sql, RowMappings::groupRowMapping);
 
         return result;
     }
 
+    public List<GroupEntity> getAll(int limit, long lastCount, boolean initial, boolean asc) {
+
+        String sql = "SELECT g.*, " +
+                "(SELECT COUNT(*) FROM legend.posts AS p " +
+                "WHERE p.group_id = g.id " +
+                "AND p.date_created BETWEEN NOW() - INTERVAL '24 HOURS' AND NOW() " +
+                "AND p.is_active = true) " +
+                "AS posts_today " +
+                "FROM legend.groups AS g " +
+                "WHERE g.is_active = true ";
+
+        if(!initial) {
+            sql += asc ? "AND posts_today > :lastCount " : "WHERE posts_today < :lastCount ";
+        }
+
+        sql += "ORDER BY posts_today, g.id " +
+                "LIMIT :limit";
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("lastCount", lastCount)
+                .addValue("limit", limit);
+
+        List<GroupEntity> result =  customJdbc.query(sql, namedParameters, RowMappings::groupRowMapping);
+
+        return result;
+    }
+
     @Override
     public GroupEntity getById(long id) {
-        String sql = "SELECT * FROM legend.groups " +
-                "WHERE id = :id";
+        String sql = "SELECT g.*, " +
+                "(SELECT COUNT(*) FROM legend.posts AS p " +
+                "WHERE p.group_id = g.id " +
+                "AND p.date_created BETWEEN NOW() - INTERVAL '24 HOURS' AND NOW() " +
+                "AND p.is_active = true) " +
+                "AS posts_today " +
+                "FROM legend.groups AS g " +
+                "WHERE g.is_active = true " +
+                "AND id = :id " +
+                "ORDER BY posts_today, g.id";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
             .addValue("id", id);
@@ -191,14 +234,13 @@ public class GroupRepositoryImpl implements GroupRepository {
     @Override
     public void update(GroupEntity group) {
         String sql = "UPDATE legend.groups " +
-                "SET name=:name, description=:description, is_active=:isActive, tags=:tags, date_modified=now() " +
+                "SET name=:name, description=:description, tags=:tags, date_modified=now() " +
                 "WHERE id = :id";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
                 .addValue("id", group.getId())
                 .addValue("name", group.getName())
                 .addValue("description", group.getDescription())
-                .addValue("isActive", group.getIsActive())
                 .addValue("tags", group.getTags());
 
         customJdbc.update(sql, namedParameters);

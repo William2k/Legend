@@ -19,6 +19,8 @@ public interface GroupRepository extends CRUDRepository<GroupEntity> {
 
     List<GroupEntity> getAllByCreatorId(long creatorId);
 
+    List<GroupEntity> getAll(int limit, long lastCount, boolean initial, boolean asc);
+
     List<UserEntity> getSubscribedUsers(long groupId);
 
     List<GroupEntity> getSubscribedGroups(long userId);

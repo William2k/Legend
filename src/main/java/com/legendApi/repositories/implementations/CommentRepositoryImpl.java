@@ -85,13 +85,12 @@ public class CommentRepositoryImpl implements CommentRepository {
     @Override
     public void update(CommentEntity comment) {
         String sql = "UPDATE legend.comments " +
-                "SET content=:content, is_active=:isActive, date_modified=now() " +
+                "SET content=:content, date_modified=now() " +
                 "WHERE id = :id";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
             .addValue("id", comment.getId())
-            .addValue("content", comment.getContent())
-            .addValue("isActive", comment.getIsActive());
+            .addValue("content", comment.getContent());
 
         customJdbc.update(sql, namedParameters);
     }

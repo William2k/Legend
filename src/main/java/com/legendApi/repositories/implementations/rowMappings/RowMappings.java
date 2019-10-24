@@ -21,6 +21,7 @@ public class RowMappings {
         group.setIsActive(rs.getBoolean("is_active"));
         group.setPostCount(rs.getInt("post_count"));
         group.setSubscriberCount(rs.getInt("subscriber_count"));
+        group.setPostsTodayCount(rs.getInt("posts_today"));
         group.setTags((String[])rs.getArray("tags").getArray());
 
         return group;

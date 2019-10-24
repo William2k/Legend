@@ -31,8 +31,8 @@ public class GroupController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<GroupResponseDTO> getGroups(@RequestParam("limit") int limit, @RequestParam("subset") int subset) {
-        List<GroupResponseDTO> groups = groupService.getAll();
+    public List<GroupResponseDTO> getGroups(@RequestParam("limit") int limit, @RequestParam("lastCount") long lastCount, @RequestParam("initial") boolean initial, @RequestParam("asc") boolean asc) {
+        List<GroupResponseDTO> groups = groupService.getAll(limit, lastCount, initial, asc);
 
         return groups;
     }
