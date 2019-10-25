@@ -8,6 +8,7 @@ import com.legendApi.models.entities.UserEntity;
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 public class RowMappings {
     public static GroupEntity groupRowMapping(ResultSet rs, int rowNum) throws SQLException {
@@ -16,8 +17,8 @@ public class RowMappings {
         group.setName(rs.getString("name"));
         group.setDescription(rs.getString("description"));
         group.setCreatorId(rs.getInt("creator_id"));
-        group.setDateCreated(rs.getDate("date_created"));
-        group.setDateModified(rs.getDate("date_modified"));
+        group.setDateCreated(rs.getObject("date_created", LocalDateTime.class));
+        group.setDateModified(rs.getObject("date_modified", LocalDateTime.class));
         group.setIsActive(rs.getBoolean("is_active"));
         group.setPostCount(rs.getInt("post_count"));
         group.setSubscriberCount(rs.getInt("subscriber_count"));
@@ -32,8 +33,8 @@ public class RowMappings {
         post.setId(rs.getLong("id"));
         post.setName(rs.getString("name"));
         post.setCreatorId(rs.getInt("creator_id"));
-        post.setDateCreated(rs.getDate("date_created"));
-        post.setDateModified(rs.getDate("date_modified"));
+        post.setDateCreated(rs.getObject("date_created", LocalDateTime.class));
+        post.setDateModified(rs.getObject("date_modified", LocalDateTime.class));
         post.setGroupId(rs.getInt("group_id"));
         post.setContent(rs.getString("content"));
         post.setIsActive(rs.getBoolean("is_active"));
@@ -51,8 +52,8 @@ public class RowMappings {
         comment.setPostId(rs.getInt("post_id"));
         comment.setCreatorId(rs.getInt("creator_id"));
         comment.setParentCommentId(rs.getInt("parent_comment_id"));
-        comment.setDateCreated(rs.getDate("date_created"));
-        comment.setDateModified(rs.getDate("date_modified"));
+        comment.setDateCreated(rs.getObject("date_created", LocalDateTime.class));
+        comment.setDateModified(rs.getObject("date_modified", LocalDateTime.class));
         comment.setIsActive(rs.getBoolean("is_active"));
         return comment;
     }
@@ -66,8 +67,8 @@ public class RowMappings {
         user.setEmailAddress(rs.getString("email_address"));
         user.setPassword(rs.getString("password"));
         user.setStringRoles((String[])rs.getArray("roles").getArray());
-        user.setDateCreated(rs.getDate("date_created"));
-        user.setDateModified(rs.getDate("date_modified"));
+        user.setDateCreated(rs.getObject("date_created", LocalDateTime.class));
+        user.setDateModified(rs.getObject("date_modified", LocalDateTime.class));
         user.setIsActive(rs.getBoolean("is_active"));
         return user;
     }

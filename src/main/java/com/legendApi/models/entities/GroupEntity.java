@@ -1,5 +1,6 @@
 package com.legendApi.models.entities;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class GroupEntity {
@@ -7,8 +8,8 @@ public class GroupEntity {
     private String name;
     private String description;
     private boolean isActive;
-    private Date dateCreated;
-    private Date dateModified;
+    private LocalDateTime dateCreated;
+    private LocalDateTime dateModified;
     private long creatorId;
     private long subscriberCount;
     private long postCount;
@@ -27,11 +28,11 @@ public class GroupEntity {
     public boolean getIsActive() {return  isActive;}
     public void  setIsActive(boolean value) {isActive = value;}
 
-    public Date getDateCreated() {return  dateCreated;}
-    public void  setDateCreated(Date value) {dateCreated = value;}
+    public LocalDateTime getDateCreated() {return  dateCreated;}
+    public void  setDateCreated(LocalDateTime value) {dateCreated = value;}
 
-    public Date getDateModified() {return  dateModified;}
-    public void  setDateModified(Date value) {dateModified = value;}
+    public LocalDateTime getDateModified() {return  dateModified;}
+    public void  setDateModified(LocalDateTime value) {dateModified = value;}
 
     public long getCreatorId() {return creatorId;}
     public void setCreatorId(long value) {creatorId = value;}

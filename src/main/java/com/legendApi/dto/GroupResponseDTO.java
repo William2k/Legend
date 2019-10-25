@@ -2,6 +2,7 @@ package com.legendApi.dto;
 
 import com.legendApi.models.entities.GroupEntity;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class GroupResponseDTO {
@@ -15,6 +16,8 @@ public class GroupResponseDTO {
         setPostCount(group.getPostCount());
         setTags(group.getTags());
         setPostsTodayCount(group.getPostsTodayCount());
+        setDateCreated(group.getDateCreated().toString());
+        setDateModified(group.getDateModified() != null ? group.getDateModified().toString() : null);
     }
 
     private String name;
@@ -23,6 +26,8 @@ public class GroupResponseDTO {
     private long postCount;
     private long subscriberCount;
     private long postsTodayCount;
+    private String dateCreated;
+    private String dateModified;
     private String[] tags;
 
     public String getName() {return name;}
@@ -45,4 +50,10 @@ public class GroupResponseDTO {
 
     public String[] getTags() {return tags;}
     public void setTags(String[] value) {tags = value;}
+
+    public String getDateCreated() { return dateCreated; }
+    public void setDateCreated(String value) { dateCreated = value; }
+
+    public String getDateModified() { return dateModified; }
+    public void setDateModified(String value) { dateModified = value; }
 }

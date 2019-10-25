@@ -12,6 +12,8 @@ public class UserResponseDTO {
         setLastName(user.getLastName());
         setEmailAddress(user.getEmailAddress());
         setRoles(user.getStringRoles());
+        setDateCreated(user.getDateCreated() != null ? user.getDateCreated().toString() : null);
+        setDateModified(user.getDateModified() != null ? user.getDateModified().toString() : null);
         setIsActive(user.getIsActive());
     }
 
@@ -20,6 +22,8 @@ public class UserResponseDTO {
     private String lastName;
     private String emailAddress;
     private String[] stringRoles;
+    private String dateCreated;
+    private String dateModified;
     private boolean isActive;
 
     public String getUsername() {
@@ -44,6 +48,12 @@ public class UserResponseDTO {
 
     public String[] getRoles() {return stringRoles;}
     public void setRoles(String[] value) {stringRoles = value;}
+
+    public String getDateCreated() { return dateCreated; }
+    public void setDateCreated(String value) { dateCreated = value; }
+
+    public String getDateModified() { return dateModified; }
+    public void setDateModified(String value) { dateModified = value; }
 
     public boolean getIsActive() {return  isActive;}
     public void  setIsActive(boolean value) {isActive = value;}
