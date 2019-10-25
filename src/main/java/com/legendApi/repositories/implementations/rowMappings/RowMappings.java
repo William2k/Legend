@@ -35,10 +35,11 @@ public class RowMappings {
         post.setDateCreated(rs.getDate("date_created"));
         post.setDateModified(rs.getDate("date_modified"));
         post.setGroupId(rs.getInt("group_id"));
-        post.setOpeningCommentId(rs.getInt("opening_comment_id"));
+        post.setContent(rs.getString("content"));
         post.setIsActive(rs.getBoolean("is_active"));
         post.setSubscriberCount(rs.getInt("subscriber_count"));
         post.setCommentCount(rs.getInt("comment_count"));
+        post.setCommentsTodayCount(rs.getInt("comments_today"));
 
         return post;
     }

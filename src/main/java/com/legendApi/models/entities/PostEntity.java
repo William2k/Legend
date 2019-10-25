@@ -5,21 +5,24 @@ import java.util.Date;
 public class PostEntity {
     private long id;
     private String name;
+    private String content;
     private boolean isActive;
     private Date dateCreated;
     private Date dateModified;
     private long creatorId;
     private long groupId;
-    private long openingCommentId;
     private long subscriberCount;
     private long commentCount;
-    private long commentsTodayComment;
+    private long commentsTodayCount;
 
     public long getId() {return id;}
     public void setId(long value) {id = value;}
 
     public String getName() {return name;}
     public void setName(String value) {name = value;}
+
+    public String getContent() { return content; }
+    public void setContent(String value) { content = value; }
 
     public boolean getIsActive() {return  isActive;}
     public void  setIsActive(boolean value) {isActive = value;}
@@ -36,15 +39,12 @@ public class PostEntity {
     public long getGroupId() {return groupId;}
     public void setGroupId(long value) {groupId = value;}
 
-    public long getOpeningCommentId() {return openingCommentId;}
-    public void setOpeningCommentId(long value) {openingCommentId = value;}
-
     public long getSubscriberCount() {return subscriberCount;}
     public void setSubscriberCount(long value) {subscriberCount = value;}
 
     public long getCommentCount() {return commentCount;}
     public void setCommentCount(long value) {commentCount = value;}
 
-    public long getCommentsTodayComment() { return commentsTodayComment;}
-    public void setCommentsTodayComment(long value) { commentsTodayComment = value; }
+    public long getCommentsTodayCount() { return commentsTodayCount;}
+    public void setCommentsTodayCount(long value) { commentsTodayCount = value; }
 }

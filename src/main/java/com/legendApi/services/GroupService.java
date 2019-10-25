@@ -37,9 +37,6 @@ public class GroupService {
                 .stream().map(GroupResponseDTO::new)
                 .collect(Collectors.toList());
 
-        groupDtos.forEach(groupResponseDTO ->
-                groupResponseDTO.setPostCount( groupRepository.getPostCount(groupResponseDTO.getName()) ));
-
         return groupDtos;
     }
 
@@ -50,9 +47,6 @@ public class GroupService {
                 .stream().map(GroupResponseDTO::new)
                 .collect(Collectors.toList());
 
-       groupDtos.forEach(groupResponseDTO ->
-                        groupResponseDTO.setPostCount( groupRepository.getPostCount(groupResponseDTO.getName()) ));
-
         return groupDtos;
    }
 
@@ -62,9 +56,6 @@ public class GroupService {
         List<GroupResponseDTO> groupDtos = groups
                 .stream().map(GroupResponseDTO::new)
                 .collect(Collectors.toList());
-
-        groupDtos.forEach(groupResponseDTO ->
-                groupResponseDTO.setPostCount( groupRepository.getPostCount(groupResponseDTO.getName()) ));
 
         return groupDtos;
     }

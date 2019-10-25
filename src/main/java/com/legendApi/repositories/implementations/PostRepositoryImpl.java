@@ -71,6 +71,35 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
+    public List<PostEntity> getAll(String group, int limit, long lastCount, boolean initial, boolean asc) {
+        String sql = "SELECT p.*, " +
+                "(SELECT COUNT(*) FROM legend.comments AS c " +
+                "WHERE c.post_id = p.id " +
+                "AND c.date_created BETWEEN NOW() - INTERVAL '24 HOURS' AND NOW() " +
+                "AND c.is_active = true) " +
+                "AS comments_today " +
+                "FROM legend.posts AS p " +
+                "WHERE p.is_active = true " +
+                "AND p.group_id = (SELECT g.id FROM legend.groups AS g WHERE UPPER(g.name) = :group)";
+
+        if(!initial) {
+            sql += asc ? "AND comments_today > :lastCount " : "WHERE comments_today < :lastCount ";
+        }
+
+        sql += "ORDER BY comments_today, p.id " +
+                "LIMIT :limit";
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("lastCount", lastCount)
+                .addValue("group", group.toUpperCase())
+                .addValue("limit", limit);
+
+        List<PostEntity> result =  customJdbc.query(sql, namedParameters, RowMappings::postRowMapping);
+
+        return result;
+    }
+
+    @Override
     public PostEntity getById(long id) {
         String sql = "SELECT * FROM legend.posts " +
                 "WHERE id = :id";
@@ -85,16 +114,14 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public long add(PostEntity post) throws SQLException {
-        String sql = "INSERT INTO legend.posts(name, description, is_active, open_comment_id, group_id, creator_id) " +
-                "VALUES (:name, :isActive, :openCommentId, :groupId, :creatorId); " +
-                "UPDATE legend.groups " +
-                "SET post_count = post_count + 1 " +
-                "WHERE id = :groupId";
+        String sql = "INSERT INTO legend.posts(name, content, is_active, group_id, creator_id) " +
+                "VALUES (:name, :content, :isActive, :groupId, :creatorId); ";
+
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
                 .addValue("name", post.getName())
                 .addValue("isActive", post.getIsActive())
-                .addValue("openCommentId", post.getOpeningCommentId())
+                .addValue("content", post.getContent())
                 .addValue("groupId", post.getGroupId())
                 .addValue("creatorId", post.getCreatorId());
 
@@ -107,6 +134,12 @@ public class PostRepositoryImpl implements PostRepository {
         if(key == null) {
             throw new SQLException("Something went wrong while adding the entity");
         }
+
+        String updateSql = "UPDATE legend.groups " +
+                "SET post_count = post_count + 1 " +
+                "WHERE id = :groupId;";
+
+        customJdbc.update(updateSql, namedParameters);
 
         return key.longValue();
     }

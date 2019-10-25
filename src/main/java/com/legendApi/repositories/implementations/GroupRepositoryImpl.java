@@ -95,7 +95,7 @@ public class GroupRepositoryImpl implements GroupRepository {
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
             .addValue("name", name.toUpperCase());
 
-        GroupEntity result = customJdbc.queryForObject(sql, namedParameters, RowMappings::groupRowMapping);
+        GroupEntity result = customJdbc.queryForObject(sql, namedParameters,  RowMappings::groupRowMapping);
 
         return result;
     }

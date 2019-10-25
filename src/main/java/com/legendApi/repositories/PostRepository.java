@@ -11,4 +11,6 @@ public interface PostRepository extends CRUDRepository<PostEntity> {
     List<UserEntity> getSubscribedUsers(long topicId);
 
     List<PostEntity> getSubscribedPosts(long userId);
+
+    List<PostEntity> getAll(String group, int limit, long lastCount, boolean initial, boolean asc);
 }

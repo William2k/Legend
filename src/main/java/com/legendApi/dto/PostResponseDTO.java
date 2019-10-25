@@ -8,8 +8,11 @@ public class PostResponseDTO {
     public PostResponseDTO() { }
 
     public PostResponseDTO(PostEntity postEntity) {
-        name = postEntity.getName();
-        isActive = postEntity.getIsActive();
+        setName(postEntity.getName());
+        setCommentsCount(postEntity.getCommentCount());
+        setSubscriberCount(postEntity.getSubscriberCount());
+        setCommentsTodayCount(postEntity.getCommentsTodayCount());
+        setIsActive(postEntity.getIsActive());
     }
 
     private String name;

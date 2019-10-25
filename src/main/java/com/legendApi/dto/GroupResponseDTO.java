@@ -12,7 +12,9 @@ public class GroupResponseDTO {
         setDescription(group.getDescription());
         setIsActive(group.getIsActive());
         setSubscriberCount(group.getSubscriberCount());
+        setPostCount(group.getPostCount());
         setTags(group.getTags());
+        setPostsTodayCount(group.getPostsTodayCount());
     }
 
     private String name;
