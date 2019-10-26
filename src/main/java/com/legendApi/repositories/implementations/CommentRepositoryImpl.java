@@ -10,6 +10,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -37,6 +38,29 @@ public class CommentRepositoryImpl implements CommentRepository {
     @Override
     public List<CommentEntity> getAll() {
         List<CommentEntity> result = customJdbc.query("SELECT * FROM legend.comments", RowMappings::commentRowMapping);
+
+        return result;
+    }
+
+    @Override
+    public List<CommentEntity> getAll(long post, int limit, LocalDateTime lastDateCreated, boolean initial, boolean asc) {
+        String sql = "SELECT * FROM legend.comments " +
+                "WHERE is_active = true " +
+                "AND post_id = :post ";
+
+        if(!initial) {
+            sql += asc ? "AND date_created > :lastDateCreated " : "AND date_created < :lastDateCreated ";
+        }
+
+        sql += "ORDER BY date_created " +
+                "LIMIT :limit";
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("post", post)
+                .addValue("lastDateCreated", lastDateCreated)
+                .addValue("limit", limit);
+
+        List<CommentEntity> result = customJdbc.query(sql, namedParameters, RowMappings::commentRowMapping);
 
         return result;
     }

@@ -26,7 +26,13 @@ public class PostService {
         this.groupRepository = groupRepository;
     }
 
-    public List<PostResponseDTO> getAll(String group, int limit, long lastCount, boolean initial, boolean asc) {
+    public PostResponseDTO getPostById(long id) {
+        PostResponseDTO result = new PostResponseDTO(postRepository.getById(id));
+
+        return result;
+    }
+
+    public List<PostResponseDTO> getAllPosts(String group, int limit, long lastCount, boolean initial, boolean asc) {
         List<PostEntity> posts = postRepository.getAll(group, limit, lastCount, initial, asc);
 
         List<PostResponseDTO> postDtos = posts
@@ -38,6 +44,10 @@ public class PostService {
 
     public void addPost(AddPost model) {
         PostEntity post = new PostEntity();
+
+        if(model.getName().isEmpty() || model.getContent().isEmpty()) {
+            throw new CustomHttpException("Name and Content cannot be null", HttpStatus.BAD_REQUEST);
+        }
 
         post.setName(model.getName());
         post.setContent(model.getContent());

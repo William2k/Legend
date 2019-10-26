@@ -9,7 +9,9 @@ public class PostResponseDTO {
     public PostResponseDTO() { }
 
     public PostResponseDTO(PostEntity postEntity) {
+        setId(postEntity.getId());
         setName(postEntity.getName());
+        setContent(postEntity.getContent());
         setCommentsCount(postEntity.getCommentCount());
         setSubscriberCount(postEntity.getSubscriberCount());
         setCommentsTodayCount(postEntity.getCommentsTodayCount());
@@ -18,7 +20,9 @@ public class PostResponseDTO {
         setIsActive(postEntity.getIsActive());
     }
 
+    private long id;
     private String name;
+    private String content;
     private long subscriberCount;
     private long commentsTodayCount;
     private long commentsCount;
@@ -26,8 +30,14 @@ public class PostResponseDTO {
     private String dateModified;
     private boolean isActive;
 
+    public long getId() {return id;}
+    public void setId(long value) {id = value;}
+
     public String getName() {return name;}
     public void setName(String value) {name = value;}
+
+    public String getContent() { return content; }
+    public void setContent(String value) { content = value; }
 
     public long getSubscriberCount() {return subscriberCount;}
     public void setSubscriberCount(long value) {subscriberCount = value;}

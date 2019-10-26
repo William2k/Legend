@@ -24,7 +24,7 @@ public class GroupController {
     }
 
     @RequestMapping(value = "{name}", method = RequestMethod.GET)
-    public GroupResponseDTO getGroup(@PathVariable("name") String name ) {
+    public GroupResponseDTO getGroup(@PathVariable("name") String name) {
         GroupResponseDTO group = groupService.getByName(name);
 
         return group;

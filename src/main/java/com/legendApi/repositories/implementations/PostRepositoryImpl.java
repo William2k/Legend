@@ -24,8 +24,15 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public List<PostEntity> getAllByCreatorId(long creatorId) {
-        String sql = "SELECT * FROM legend.posts " +
-                "WHERE creator_id = :id";
+        String sql = "SELECT p.*, " +
+                "(SELECT COUNT(*) FROM legend.comments AS c " +
+                "WHERE c.post_id = p.id " +
+                "AND c.date_created BETWEEN NOW() - INTERVAL '24 HOURS' AND NOW() " +
+                "AND c.is_active = true) " +
+                "AS comments_today " +
+                "FROM legend.posts AS p " +
+                "WHERE p.creator_id = :id " +
+                "AND p.is_active = true";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
             .addValue("id", creatorId);
@@ -39,7 +46,8 @@ public class PostRepositoryImpl implements PostRepository {
     public List<UserEntity> getSubscribedUsers(long topicId) {
         String sql = "SELECT u.* " +
                 "FROM legend.users AS u JOIN legend.users_posts_subs AS ups ON u.id = ups.user_id " +
-                "WHERE ups.topic_id = :id";
+                "WHERE ups.topic_id = :id " +
+                "AND ups.is_active = true";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
             .addValue("id", topicId);
@@ -51,9 +59,15 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public List<PostEntity> getSubscribedPosts(long userId) {
-        String sql = "SELECT p.* " +
+        String sql = "SELECT p.*, " +
+                "(SELECT COUNT(*) FROM legend.comments AS c " +
+                "WHERE c.post_id = p.id " +
+                "AND c.date_created BETWEEN NOW() - INTERVAL '24 HOURS' AND NOW() " +
+                "AND c.is_active = true) " +
+                "AS comments_today " +
                 "FROM legend.posts AS p JOIN legend.users_topics AS ut ON p.id = ut.topic_id " +
-                "WHERE ut.user_id = :id";
+                "WHERE ut.user_id = :id " +
+                "AND p.is_active = true";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
             .addValue("id", userId);
@@ -65,7 +79,16 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public List<PostEntity> getAll() {
-        List<PostEntity> result = customJdbc.query("SELECT * FROM legend.posts", RowMappings::postRowMapping);
+        String sql = "SELECT p.*, " +
+                "(SELECT COUNT(*) FROM legend.comments AS c " +
+                "WHERE c.post_id = p.id " +
+                "AND c.date_created BETWEEN NOW() - INTERVAL '24 HOURS' AND NOW() " +
+                "AND c.is_active = true) " +
+                "AS comments_today " +
+                "FROM legend.posts AS p " +
+                "WHERE p.is_active = true";
+
+        List<PostEntity> result = customJdbc.query(sql, RowMappings::postRowMapping);
 
         return result;
     }
@@ -80,10 +103,10 @@ public class PostRepositoryImpl implements PostRepository {
                 "AS comments_today " +
                 "FROM legend.posts AS p " +
                 "WHERE p.is_active = true " +
-                "AND p.group_id = (SELECT g.id FROM legend.groups AS g WHERE UPPER(g.name) = :group)";
+                "AND p.group_id = (SELECT g.id FROM legend.groups AS g WHERE UPPER(g.name) = :group) ";
 
         if(!initial) {
-            sql += asc ? "AND comments_today > :lastCount " : "WHERE comments_today < :lastCount ";
+            sql += asc ? "AND comments_today > :lastCount " : "AND comments_today < :lastCount ";
         }
 
         sql += "ORDER BY comments_today, p.id " +
@@ -101,8 +124,15 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public PostEntity getById(long id) {
-        String sql = "SELECT * FROM legend.posts " +
-                "WHERE id = :id";
+        String sql = "SELECT p.*, " +
+                "(SELECT COUNT(*) FROM legend.comments AS c " +
+                "WHERE c.post_id = p.id " +
+                "AND c.date_created BETWEEN NOW() - INTERVAL '24 HOURS' AND NOW() " +
+                "AND c.is_active = true) " +
+                "AS comments_today " +
+                "FROM legend.posts AS p " +
+                "WHERE p.id = :id " +
+                "AND p.is_active = true";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
             .addValue("id", id);

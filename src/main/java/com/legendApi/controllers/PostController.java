@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("api/post")
 public class PostController {
     private final PostService postService;
 
@@ -18,9 +19,16 @@ public class PostController {
         this.postService = postService;
     }
 
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public PostResponseDTO post(@PathVariable("id") long id) {
+        PostResponseDTO post = postService.getPostById(id);
+
+        return post;
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public List<PostResponseDTO> getPosts(@RequestParam("group") String group, @RequestParam("limit") int limit, @RequestParam("lastCount") long lastCount, @RequestParam("initial") boolean initial, @RequestParam("asc") boolean asc) {
-        List<PostResponseDTO> posts = postService.getAll(group, limit, lastCount, initial, asc);
+        List<PostResponseDTO> posts = postService.getAllPosts(group, limit, lastCount, initial, asc);
 
         return posts;
     }

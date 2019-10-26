@@ -102,8 +102,14 @@ public class GroupRepositoryImpl implements GroupRepository {
 
     @Override
     public List<GroupEntity> getAllByCreatorId(long creatorId) {
-        String sql = "SELECT * FROM legend.groups " +
-                "WHERE creator_id = :id";
+        String sql = "SELECT g.*, " +
+                "(SELECT COUNT(*) FROM legend.posts AS p " +
+                "WHERE p.group_id = g.id " +
+                "AND p.date_created BETWEEN NOW() - INTERVAL '24 HOURS' AND NOW() " +
+                "AND p.is_active = true) " +
+                "AS posts_today " +
+                "FROM legend.groups AS g" +
+                "WHERE g.creator_id = :id";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
             .addValue("id", creatorId);
@@ -170,7 +176,7 @@ public class GroupRepositoryImpl implements GroupRepository {
                 "WHERE g.is_active = true ";
 
         if(!initial) {
-            sql += asc ? "AND posts_today > :lastCount " : "WHERE posts_today < :lastCount ";
+            sql += asc ? "AND posts_today > :lastCount " : "AND posts_today < :lastCount ";
         }
 
         sql += "ORDER BY posts_today, g.id " +
