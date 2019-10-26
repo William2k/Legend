@@ -109,7 +109,7 @@ public class PostRepositoryImpl implements PostRepository {
             sql += asc ? "AND comments_today > :lastCount " : "AND comments_today < :lastCount ";
         }
 
-        sql += "ORDER BY comments_today, p.id " +
+        sql += asc ? "ORDER BY comments_today ASC, p.id ASC " : "ORDER BY comments_today DESC, p.id DESC " +
                 "LIMIT :limit";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()

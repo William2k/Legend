@@ -179,7 +179,7 @@ public class GroupRepositoryImpl implements GroupRepository {
             sql += asc ? "AND posts_today > :lastCount " : "AND posts_today < :lastCount ";
         }
 
-        sql += "ORDER BY posts_today, g.id " +
+        sql += asc ? "ORDER BY posts_today ASC, g.id ASC " : "ORDER BY posts_today DESC, g.id DESC " +
                 "LIMIT :limit";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()

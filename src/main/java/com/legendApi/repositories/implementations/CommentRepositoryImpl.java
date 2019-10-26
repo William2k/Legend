@@ -25,7 +25,8 @@ public class CommentRepositoryImpl implements CommentRepository {
     @Override
     public List<CommentEntity> getChildComments(long id) {
         String sql = "SELECT * FROM legend.comments " +
-                "WHERE parent_comment_id=:id";
+                "WHERE parent_comment_id=:id " +
+                "AND is_active = true";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
             .addValue("id", id);
@@ -37,7 +38,10 @@ public class CommentRepositoryImpl implements CommentRepository {
 
     @Override
     public List<CommentEntity> getAll() {
-        List<CommentEntity> result = customJdbc.query("SELECT * FROM legend.comments", RowMappings::commentRowMapping);
+        String sql = "SELECT * FROM legend.comments " +
+                " WHERE is_active = true";
+
+        List<CommentEntity> result = customJdbc.query(sql, RowMappings::commentRowMapping);
 
         return result;
     }
@@ -52,7 +56,7 @@ public class CommentRepositoryImpl implements CommentRepository {
             sql += asc ? "AND date_created > :lastDateCreated " : "AND date_created < :lastDateCreated ";
         }
 
-        sql += "ORDER BY date_created " +
+        sql += "ORDER BY date_created " + (asc ? "ASC " : "DESC ") +
                 "LIMIT :limit";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
