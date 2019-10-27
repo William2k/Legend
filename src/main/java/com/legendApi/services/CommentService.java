@@ -29,6 +29,12 @@ public class CommentService {
     public List<CommentResponseDTO> getAll(long post, int limit, LocalDateTime lastDateCreated, boolean initial, boolean asc) {
         List<CommentEntity> comments = commentRepository.getAll(post, limit, lastDateCreated, initial, asc);
 
+        List<CommentResponseDTO> result = entityToDTO(comments);
+
+        return result;
+    }
+
+    private List<CommentResponseDTO> entityToDTO(List<CommentEntity> comments) {
         List<CommentResponseDTO> result = comments.stream().map(commentEntity -> {
             CommentResponseDTO commentResponseDTO = new CommentResponseDTO(commentEntity);
             commentResponseDTO.setCreator(userRepository.getById(commentEntity.getCreatorId()).getUsername());
@@ -36,7 +42,19 @@ public class CommentService {
             return commentResponseDTO;
         }).collect(Collectors.toList());
 
+        getChildComments(result);
+
         return result;
+    }
+
+    private void getChildComments(List<CommentResponseDTO> comments) {
+        comments.forEach(commentResponseDTO -> {
+            List<CommentEntity> commentEntities = commentRepository.getChildComments(commentResponseDTO.getId());
+            List<CommentResponseDTO> commentsList = entityToDTO(commentEntities);
+
+            getChildComments(commentsList);
+            commentResponseDTO.setComments(commentsList);
+        });
     }
 
     public void addComment(AddComment model) {

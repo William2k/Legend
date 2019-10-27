@@ -50,7 +50,8 @@ public class CommentRepositoryImpl implements CommentRepository {
     public List<CommentEntity> getAll(long post, int limit, LocalDateTime lastDateCreated, boolean initial, boolean asc) {
         String sql = "SELECT * FROM legend.comments " +
                 "WHERE is_active = true " +
-                "AND post_id = :post ";
+                "AND post_id = :post " +
+                "AND parent_comment_id = 0 ";
 
         if(!initial) {
             sql += asc ? "AND date_created > :lastDateCreated " : "AND date_created < :lastDateCreated ";
