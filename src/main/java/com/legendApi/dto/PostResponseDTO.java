@@ -17,6 +17,7 @@ public class PostResponseDTO {
         setCommentsTodayCount(postEntity.getCommentsTodayCount());
         setDateCreated(postEntity.getDateCreated() != null ? postEntity.getDateCreated().toString() : null);
         setDateModified(postEntity.getDateModified() != null ? postEntity.getDateModified().toString() : null);
+        setCreator(postEntity.getCreatorUsername());
         setIsActive(postEntity.getIsActive());
     }
 
@@ -28,6 +29,7 @@ public class PostResponseDTO {
     private long commentsCount;
     private String dateCreated;
     private String dateModified;
+    private String creator;
     private boolean isActive;
 
     public long getId() {return id;}
@@ -53,6 +55,9 @@ public class PostResponseDTO {
 
     public String getDateModified() { return dateModified; }
     public void setDateModified(String value) { dateModified = value; }
+
+    public String getCreator() { return creator; }
+    public void setCreator(String creator) { this.creator = creator; }
 
     public boolean getIsActive() {return  isActive;}
     public void  setIsActive(boolean value) {isActive = value;}

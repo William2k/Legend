@@ -214,14 +214,14 @@ public class GroupRepositoryImpl implements GroupRepository {
 
     @Override
     public long add(GroupEntity group) throws SQLException {
-        String sql = "INSERT INTO legend.groups(name, description, is_active, creator_id, tags) " +
-                "VALUES (:name, :description, :isActive, :creatorId, :tags)";
+        String sql = "INSERT INTO legend.groups(name, description, is_active, creator_username, tags) " +
+                "VALUES (:name, :description, :isActive, :creatorUsername, :tags)";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
                 .addValue("name", group.getName())
                 .addValue("description", group.getDescription())
                 .addValue("isActive", group.getIsActive())
-                .addValue("creatorId", group.getCreatorId())
+                .addValue("creatorUsername", group.getCreatorUsername())
                 .addValue("tags", group.getTags());
 
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();

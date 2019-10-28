@@ -85,8 +85,8 @@ public class CommentRepositoryImpl implements CommentRepository {
 
     @Override
     public long add(CommentEntity comment) throws SQLException {
-        String sql = "INSERT INTO legend.comments(content, is_active, post_id, parent_comment_id, creator_id) " +
-                "VALUES (:content, :isActive, :postId, :parentCommentId, :creatorId);";
+        String sql = "INSERT INTO legend.comments(content, is_active, post_id, parent_comment_id, creator_username) " +
+                "VALUES (:content, :isActive, :postId, :parentCommentId, :creatorUsername);";
 
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
@@ -94,7 +94,7 @@ public class CommentRepositoryImpl implements CommentRepository {
             .addValue("isActive", comment.getIsActive())
             .addValue("postId", comment.getPostId())
             .addValue("parentCommentId", comment.getParentCommentId())
-            .addValue("creatorId", comment.getCreatorId());
+            .addValue("creatorUsername", comment.getCreatorUsername());
 
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 

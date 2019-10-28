@@ -144,8 +144,8 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public long add(PostEntity post) throws SQLException {
-        String sql = "INSERT INTO legend.posts(name, content, is_active, group_id, creator_id) " +
-                "VALUES (:name, :content, :isActive, :groupId, :creatorId); ";
+        String sql = "INSERT INTO legend.posts(name, content, is_active, group_id, creator_username) " +
+                "VALUES (:name, :content, :isActive, :groupId, :creatorUsername); ";
 
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
@@ -153,7 +153,7 @@ public class PostRepositoryImpl implements PostRepository {
                 .addValue("isActive", post.getIsActive())
                 .addValue("content", post.getContent())
                 .addValue("groupId", post.getGroupId())
-                .addValue("creatorId", post.getCreatorId());
+                .addValue("creatorUsername", post.getCreatorUsername());
 
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 

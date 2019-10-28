@@ -52,7 +52,7 @@ public class PostService {
         post.setName(model.getName());
         post.setContent(model.getContent());
         post.setGroupId(groupRepository.getGroupByName(model.getGroup()).getId());
-        post.setCreatorId(CurrentUser.getId());
+        post.setCreatorUsername(CurrentUser.getUsername());
         post.setIsActive(true);
 
         try {

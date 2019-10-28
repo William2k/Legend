@@ -11,7 +11,7 @@ public class CommentEntity {
     private LocalDateTime dateModified;
     private long postId;
     private long parentCommentId;
-    private long creatorId;
+    private String creatorUsername;
 
     public long getId() {return id;}
     public void setId(long value) {id = value;}
@@ -34,6 +34,6 @@ public class CommentEntity {
     public long getParentCommentId() {return parentCommentId;}
     public void setParentCommentId(long value) {parentCommentId = value;}
 
-    public long getCreatorId() {return creatorId;}
-    public void setCreatorId(long value) {creatorId = value;}
+    public String getCreatorUsername() {return creatorUsername;}
+    public void setCreatorUsername(String value) {creatorUsername = value;}
 }

@@ -10,7 +10,7 @@ public class PostEntity {
     private boolean isActive;
     private LocalDateTime dateCreated;
     private LocalDateTime dateModified;
-    private long creatorId;
+    private String creatorUsername;
     private long groupId;
     private long subscriberCount;
     private long commentCount;
@@ -34,8 +34,8 @@ public class PostEntity {
     public LocalDateTime getDateModified() {return  dateModified;}
     public void  setDateModified(LocalDateTime value) {dateModified = value;}
 
-    public long getCreatorId() {return creatorId;}
-    public void setCreatorId(long value) {creatorId = value;}
+    public String getCreatorUsername() {return creatorUsername;}
+    public void setCreatorUsername(String value) {creatorUsername = value;}
 
     public long getGroupId() {return groupId;}
     public void setGroupId(long value) {groupId = value;}

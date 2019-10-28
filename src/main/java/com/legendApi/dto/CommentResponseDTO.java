@@ -13,6 +13,7 @@ public class CommentResponseDTO {
         setDateCreated(commentEntity.getDateCreated().toString());
         setDateModified(commentEntity.getDateModified() != null ? commentEntity.getDateModified().toString() : null);
         setIsActive(commentEntity.getIsActive());
+        setCreator(commentEntity.getCreatorUsername());
     }
 
     private long id;

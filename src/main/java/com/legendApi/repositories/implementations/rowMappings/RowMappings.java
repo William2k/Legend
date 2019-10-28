@@ -16,7 +16,7 @@ public class RowMappings {
         group.setId(rs.getLong("id"));
         group.setName(rs.getString("name"));
         group.setDescription(rs.getString("description"));
-        group.setCreatorId(rs.getInt("creator_id"));
+        group.setCreatorUsername(rs.getString("creator_username"));
         group.setDateCreated(rs.getObject("date_created", LocalDateTime.class));
         group.setDateModified(rs.getObject("date_modified", LocalDateTime.class));
         group.setIsActive(rs.getBoolean("is_active"));
@@ -32,7 +32,7 @@ public class RowMappings {
         PostEntity post = new PostEntity();
         post.setId(rs.getLong("id"));
         post.setName(rs.getString("name"));
-        post.setCreatorId(rs.getInt("creator_id"));
+        post.setCreatorUsername(rs.getString("creator_username"));
         post.setDateCreated(rs.getObject("date_created", LocalDateTime.class));
         post.setDateModified(rs.getObject("date_modified", LocalDateTime.class));
         post.setGroupId(rs.getInt("group_id"));
@@ -50,7 +50,7 @@ public class RowMappings {
         comment.setId(rs.getLong("id"));
         comment.setContent(rs.getString("content"));
         comment.setPostId(rs.getInt("post_id"));
-        comment.setCreatorId(rs.getInt("creator_id"));
+        comment.setCreatorUsername(rs.getString("creator_username"));
         comment.setParentCommentId(rs.getInt("parent_comment_id"));
         comment.setDateCreated(rs.getObject("date_created", LocalDateTime.class));
         comment.setDateModified(rs.getObject("date_modified", LocalDateTime.class));

@@ -35,12 +35,7 @@ public class CommentService {
     }
 
     private List<CommentResponseDTO> entityToDTO(List<CommentEntity> comments) {
-        List<CommentResponseDTO> result = comments.stream().map(commentEntity -> {
-            CommentResponseDTO commentResponseDTO = new CommentResponseDTO(commentEntity);
-            commentResponseDTO.setCreator(userRepository.getById(commentEntity.getCreatorId()).getUsername());
-
-            return commentResponseDTO;
-        }).collect(Collectors.toList());
+        List<CommentResponseDTO> result = comments.stream().map(CommentResponseDTO::new).collect(Collectors.toList());
 
         getChildComments(result);
 
@@ -66,7 +61,7 @@ public class CommentService {
 
         commentEntity.setPostId(model.getPostId());
         commentEntity.setContent(model.getContent());
-        commentEntity.setCreatorId(CurrentUser.getId());
+        commentEntity.setCreatorUsername(CurrentUser.getUsername());
         commentEntity.setParentCommentId(model.getParentCommentId());
         commentEntity.setIsActive(true);
 

@@ -10,7 +10,7 @@ public class GroupEntity {
     private boolean isActive;
     private LocalDateTime dateCreated;
     private LocalDateTime dateModified;
-    private long creatorId;
+    private String creatorUsername;
     private long subscriberCount;
     private long postCount;
     private long postsTodayCount;
@@ -34,8 +34,8 @@ public class GroupEntity {
     public LocalDateTime getDateModified() {return  dateModified;}
     public void  setDateModified(LocalDateTime value) {dateModified = value;}
 
-    public long getCreatorId() {return creatorId;}
-    public void setCreatorId(long value) {creatorId = value;}
+    public String getCreatorUsername() {return creatorUsername;}
+    public void setCreatorUsername(String value) {creatorUsername = value;}
 
     public long getSubscriberCount() {return subscriberCount;}
     public void setSubscriberCount(long value) {subscriberCount = value;}

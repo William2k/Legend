@@ -18,6 +18,7 @@ public class GroupResponseDTO {
         setPostsTodayCount(group.getPostsTodayCount());
         setDateCreated(group.getDateCreated().toString());
         setDateModified(group.getDateModified() != null ? group.getDateModified().toString() : null);
+        setCreator(group.getCreatorUsername());
     }
 
     private String name;
@@ -28,6 +29,7 @@ public class GroupResponseDTO {
     private long postsTodayCount;
     private String dateCreated;
     private String dateModified;
+    private String creator;
     private String[] tags;
 
     public String getName() {return name;}
@@ -56,4 +58,7 @@ public class GroupResponseDTO {
 
     public String getDateModified() { return dateModified; }
     public void setDateModified(String value) { dateModified = value; }
+
+    public String getCreator() { return creator; }
+    public void setCreator(String creator) { this.creator = creator; }
 }

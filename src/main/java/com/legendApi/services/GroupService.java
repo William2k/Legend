@@ -77,7 +77,7 @@ public class GroupService {
         groupEntity.setName(name);
         groupEntity.setDescription(group.getDescription());
         groupEntity.setTags(group.getTags());
-        groupEntity.setCreatorId(CurrentUser.getId());
+        groupEntity.setCreatorUsername(CurrentUser.getUsername());
         groupEntity.setIsActive(true);
 
         try {
