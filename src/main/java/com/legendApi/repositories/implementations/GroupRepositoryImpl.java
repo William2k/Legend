@@ -67,6 +67,21 @@ public class GroupRepositoryImpl implements GroupRepository {
     }
 
     @Override
+    public void subscribe(long userId, String groupName) {
+        String sql = "INSERT INTO legend.users_groups_subs(user_id, group_id, is_active) " +
+                "SELECT :userId, id, :isActive " +
+                "FROM legend.groups AS g " +
+                "WHERE UPPER(g.name) = :groupName ";
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("groupName", groupName.toUpperCase())
+                .addValue("isActive", true);
+
+        customJdbc.update(sql, namedParameters);
+    }
+
+    @Override
     public void subscribe(long userId, long groupId) {
         String sql = "INSERT INTO legend.users_groups_subs(user_id, group_id, is_active) " +
                 "VALUES (:userId, :groupId, :isActive)";
@@ -123,7 +138,8 @@ public class GroupRepositoryImpl implements GroupRepository {
     public List<UserEntity> getSubscribedUsers(long groupId) {
         String sql = "SELECT u.* " +
                 "FROM legend.users AS u JOIN legend.users_groups AS ug ON u.id = ug.user_id " +
-                "WHERE ug.group_id = :id";
+                "WHERE ug.group_id = :id " +
+                "AND u.is_active = true";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
             .addValue("id", groupId);
@@ -137,12 +153,30 @@ public class GroupRepositoryImpl implements GroupRepository {
     public List<GroupEntity> getSubscribedGroups(long userId) {
         String sql = "SELECT g.* " +
                 "FROM legend.groups AS g JOIN legend.users_groups AS ug ON g.id = ug.topic_id " +
-                "WHERE ug.user_id = :id";
+                "WHERE ug.user_id = :id " +
+                "AND g.is_active = true " +
+                "AND ug.is_active = true";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
             .addValue("id", userId);
 
         List<GroupEntity> result = customJdbc.query(sql, namedParameters, RowMappings::groupRowMapping);
+
+        return result;
+    }
+
+    @Override
+    public List<String> getSimpleSubscribedGroups(long userId) {
+        String sql = "SELECT g.name " +
+                "FROM legend.groups AS g JOIN legend.users_groups_subs AS ugs ON g.id = ugs.group_id " +
+                "WHERE ugs.user_id = :id " +
+                "AND g.is_active = true " +
+                "AND ugs.is_active = true";
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("id", userId);
+
+        List<String> result = customJdbc.queryForList(sql, namedParameters, String.class);
 
         return result;
     }

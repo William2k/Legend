@@ -45,6 +45,17 @@ public class GroupController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(value = "{name}/subscribe", method = RequestMethod.POST)
+    public void subscribeToGroup(@PathVariable("name") String name) {
+        groupService.subscribeToGroup(name);
+    }
+
+    @RequestMapping(value = "subscribed", method = RequestMethod.GET)
+    public List<String> getSimpleSubscribedGroups() {
+        return groupService.getSimpleSubscribedGroups();
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST)
     public void addGroup(@RequestBody AddGroup model) {
        groupService.addGroup(model);

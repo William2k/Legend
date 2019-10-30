@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +41,18 @@ public class PostService {
                 .collect(Collectors.toList());
 
         return postDtos;
+    }
+
+    public void subscribeToPost(long postId, String group) {
+        try {
+            postRepository.subscribe(CurrentUser.getId(), postId, group);
+        } catch (SQLException e) {
+            throw new CustomHttpException("Something went wrong subscribing to post", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public Map<Long, String> getSimpleSubscribedPost() {
+        return postRepository.getSimpleSubscribedPosts(CurrentUser.getId());
     }
 
     public void addPost(AddPost model) {

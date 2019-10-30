@@ -60,6 +60,18 @@ public class GroupService {
         return groupDtos;
     }
 
+    public void subscribeToGroup(String groupName) {
+        try {
+            groupRepository.subscribe(CurrentUser.getId(), groupName);
+        } catch (Exception ex) {
+            throw new CustomHttpException("Something went wrong subscribing to group", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public List<String> getSimpleSubscribedGroups() {
+        return groupRepository.getSimpleSubscribedGroups(CurrentUser.getId());
+    }
+
    public void addGroup(AddGroup group) {
         String name = group.getName();
 

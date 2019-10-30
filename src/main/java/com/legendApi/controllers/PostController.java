@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/post")
@@ -20,7 +21,7 @@ public class PostController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public PostResponseDTO post(@PathVariable("id") long id) {
+    public PostResponseDTO getPost(@PathVariable("id") long id) {
         PostResponseDTO post = postService.getPostById(id);
 
         return post;
@@ -31,6 +32,17 @@ public class PostController {
         List<PostResponseDTO> posts = postService.getAllPosts(group, limit, lastCount, initial, asc);
 
         return posts;
+    }
+
+    @RequestMapping(value = "subscribed", method = RequestMethod.GET)
+    public Map<Long, String> getSimpleSubscribedPosts() {
+        return postService.getSimpleSubscribedPost();
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(value = "{id}/subscribe", method = RequestMethod.POST)
+    public void subscribeToPost(@PathVariable("id") long id, @RequestParam("group") String group) {
+        postService.subscribeToPost(id, group);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

@@ -10,8 +10,11 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class PostRepositoryImpl implements PostRepository {
@@ -67,7 +70,8 @@ public class PostRepositoryImpl implements PostRepository {
                 "AS comments_today " +
                 "FROM legend.posts AS p JOIN legend.users_topics AS ut ON p.id = ut.topic_id " +
                 "WHERE ut.user_id = :id " +
-                "AND p.is_active = true";
+                "AND p.is_active = true " +
+                "AND ut,is_active = true";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
             .addValue("id", userId);
@@ -75,6 +79,43 @@ public class PostRepositoryImpl implements PostRepository {
         List<PostEntity> result = customJdbc.query(sql, namedParameters, RowMappings::postRowMapping);
 
         return result;
+    }
+
+    @Override
+    public Map<Long,String> getSimpleSubscribedPosts(long userId) {
+        String sql = "SELECT p.id AS postId, " +
+                "(SELECT g.name FROM legend.groups AS g WHERE g.id = p.group_id AND g.is_active = true) AS groupName " +
+                "FROM legend.posts AS p JOIN legend.users_posts_subs AS ups ON p.id = ups.post_id " +
+                "WHERE ups.user_id = :id " +
+                "AND p.is_active = true " +
+                "AND ups.is_active = true";
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("id", userId);
+
+        Map<Long, String> result = customJdbc.query(sql, namedParameters,  (ResultSet rs) -> {
+            Map<Long, String> results = new HashMap<>();
+            while (rs.next()) {
+                results.put(rs.getLong("postId"), rs.getString("groupName"));
+            }
+            return results;
+        });
+
+        return result;
+    }
+
+    @Override
+    public void subscribe(long userId, long postId, String groupName) throws SQLException {
+        String sql = "INSERT INTO legend.users_posts_subs(user_id, post_id, is_active, group_id) " +
+                "SELECT :userId, :postId, :isActive, g.id FROM legend.groups AS g WHERE UPPER(name) = :groupName ";
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("postId", postId)
+                .addValue("isActive", true)
+                .addValue("groupName", groupName.toUpperCase());
+
+        customJdbc.update(sql, namedParameters);
     }
 
     @Override
