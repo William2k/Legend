@@ -46,8 +46,16 @@ public class PostService {
     public void subscribeToPost(long postId, String group) {
         try {
             postRepository.subscribe(CurrentUser.getId(), postId, group);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new CustomHttpException("Something went wrong subscribing to post", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public void unsubscribeToPost(long postId, String group) {
+        try {
+            postRepository.unsubscribe(CurrentUser.getId(), postId, group);
+        } catch (Exception e) {
+            throw new CustomHttpException("Something went wrong unsubscribing to post", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -61,7 +69,6 @@ public class PostService {
         if(model.getName().isEmpty() || model.getContent().isEmpty()) {
             throw new CustomHttpException("Name and Content cannot be null", HttpStatus.BAD_REQUEST);
         }
-
         post.setName(model.getName());
         post.setContent(model.getContent());
         post.setGroupId(groupRepository.getGroupByName(model.getGroup()).getId());

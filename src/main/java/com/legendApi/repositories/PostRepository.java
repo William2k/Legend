@@ -16,7 +16,9 @@ public interface PostRepository extends CRUDRepository<PostEntity> {
 
     Map<Long, String> getSimpleSubscribedPosts(long userId);
 
-    void subscribe(long userId, long postId, String groupName) throws SQLException;
+    void subscribe(long userId, long postId, String groupName);
+
+    void unsubscribe(long userId, long postId, String groupName);
 
     List<PostEntity> getAll(String group, int limit, long lastCount, boolean initial, boolean asc);
 }

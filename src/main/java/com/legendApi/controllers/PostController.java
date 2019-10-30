@@ -45,6 +45,11 @@ public class PostController {
         postService.subscribeToPost(id, group);
     }
 
+    @RequestMapping(value = "{id}/unsubscribe", method = RequestMethod.DELETE)
+    public void unsubscribeToPost(@PathVariable("id") long id, @RequestParam("group") String group) {
+        postService.unsubscribeToPost(id, group);
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST)
     public void addPost(@RequestBody AddPost model) {

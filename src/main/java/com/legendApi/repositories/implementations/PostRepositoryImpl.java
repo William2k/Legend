@@ -105,7 +105,7 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public void subscribe(long userId, long postId, String groupName) throws SQLException {
+    public void subscribe(long userId, long postId, String groupName) {
         String sql = "INSERT INTO legend.users_posts_subs(user_id, post_id, is_active, group_id) " +
                 "SELECT :userId, :postId, :isActive, g.id FROM legend.groups AS g WHERE UPPER(name) = :groupName ";
 
@@ -117,6 +117,21 @@ public class PostRepositoryImpl implements PostRepository {
 
         customJdbc.update(sql, namedParameters);
     }
+
+    @Override
+    public void unsubscribe(long userId, long postId, String groupName) {
+        String sql = "DELETE FROM legend.users_posts_subs " +
+                "WHERE user_id = :userId AND post_id = :postId AND group_id = " +
+                "(SELECT g.id FROM legend.groups AS g WHERE UPPER(g.name) = :groupName)";
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("postId", postId)
+                .addValue("groupName", groupName.toUpperCase());
+
+        customJdbc.update(sql, namedParameters);
+    }
+
 
     @Override
     public List<PostEntity> getAll() {

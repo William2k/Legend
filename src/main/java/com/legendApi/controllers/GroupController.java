@@ -50,6 +50,11 @@ public class GroupController {
         groupService.subscribeToGroup(name);
     }
 
+    @RequestMapping(value = "{name}/unsubscribe", method = RequestMethod.DELETE)
+    public void unsubscribeToGroup(@PathVariable("name") String name) {
+        groupService.unsubscribeToGroup(name);
+    }
+
     @RequestMapping(value = "subscribed", method = RequestMethod.GET)
     public List<String> getSimpleSubscribedGroups() {
         return groupService.getSimpleSubscribedGroups();

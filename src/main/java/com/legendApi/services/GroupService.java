@@ -68,6 +68,14 @@ public class GroupService {
         }
     }
 
+    public void unsubscribeToGroup(String groupName) {
+        try {
+            groupRepository.unsubscribe(CurrentUser.getId(), groupName);
+        } catch (Exception ex) {
+            throw new CustomHttpException("Something went wrong unsubscribing to group", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public List<String> getSimpleSubscribedGroups() {
         return groupRepository.getSimpleSubscribedGroups(CurrentUser.getId());
     }
@@ -85,7 +93,11 @@ public class GroupService {
             throw new CustomHttpException("Group already exists", HttpStatus.CONFLICT);
         }
 
-        GroupEntity groupEntity = new GroupEntity();
+       if(group.getName().toUpperCase().equals("SUBSCRIBE")) {
+           throw new CustomHttpException("'SUBSCRIBE' cannot be used as a name", HttpStatus.BAD_REQUEST);
+       }
+
+       GroupEntity groupEntity = new GroupEntity();
         groupEntity.setName(name);
         groupEntity.setDescription(group.getDescription());
         groupEntity.setTags(group.getTags());

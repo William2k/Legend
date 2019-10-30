@@ -95,6 +95,19 @@ public class GroupRepositoryImpl implements GroupRepository {
     }
 
     @Override
+    public void unsubscribe(long userId, String groupName) {
+        String sql = "DELETE FROM legend.users_groups_subs " +
+                "WHERE user_id = :userId AND group_id = " +
+                "(SELECT g.id FROM legend.groups AS g WHERE UPPER(g.name) = :groupName)";
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("groupName", groupName.toUpperCase());
+
+        customJdbc.update(sql, namedParameters);
+    }
+
+    @Override
     public GroupEntity getGroupByName(String name) {
         String sql = "SELECT g.*, " +
                 "(SELECT COUNT(*) FROM legend.posts AS p " +
