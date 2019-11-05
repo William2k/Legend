@@ -26,10 +26,24 @@ public class CommentService {
         this.userRepository = userRepository;
     }
 
+    public CommentResponseDTO getById(long id) {
+        CommentEntity comment = commentRepository.getById(id);
+
+        return entityToDTO(comment);
+    }
+
     public List<CommentResponseDTO> getAll(long post, int limit, LocalDateTime lastDateCreated, boolean initial, boolean asc) {
         List<CommentEntity> comments = commentRepository.getAll(post, limit, lastDateCreated, initial, asc);
 
         List<CommentResponseDTO> result = entityToDTO(comments);
+
+        return result;
+    }
+
+    private CommentResponseDTO entityToDTO(CommentEntity comment) {
+        CommentResponseDTO result = new CommentResponseDTO(comment);
+
+        getChildComments(result);
 
         return result;
     }
@@ -42,14 +56,16 @@ public class CommentService {
         return result;
     }
 
-    private void getChildComments(List<CommentResponseDTO> comments) {
-        comments.forEach(commentResponseDTO -> {
-            List<CommentEntity> commentEntities = commentRepository.getChildComments(commentResponseDTO.getId());
+    private void getChildComments(CommentResponseDTO comment) {
+            List<CommentEntity> commentEntities = commentRepository.getChildComments(comment.getId());
             List<CommentResponseDTO> commentsList = entityToDTO(commentEntities);
 
             getChildComments(commentsList);
-            commentResponseDTO.setComments(commentsList);
-        });
+            comment.setComments(commentsList);
+    }
+
+    private void getChildComments(List<CommentResponseDTO> comments) {
+        comments.forEach(this::getChildComments);
     }
 
     public void addComment(AddComment model) {

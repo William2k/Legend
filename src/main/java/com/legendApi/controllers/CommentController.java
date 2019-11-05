@@ -22,6 +22,13 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public CommentResponseDTO getComment(@PathVariable("id") long id) {
+        CommentResponseDTO result = commentService.getById(id);
+
+        return result;
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public List<CommentResponseDTO> getCommentsForPost(@RequestParam("post") long post, @RequestParam("limit") int limit, @RequestParam("lastDateCreated") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime lastDateCreated, @RequestParam("initial") boolean initial, @RequestParam("asc") boolean asc) {
         List<CommentResponseDTO> result = commentService.getAll(post, limit, lastDateCreated, initial, asc);
