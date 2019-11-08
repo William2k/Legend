@@ -68,7 +68,7 @@ public class CommentService {
         comments.forEach(this::getChildComments);
     }
 
-    public void addComment(AddComment model) {
+    public long addComment(AddComment model) {
         CommentEntity commentEntity = new CommentEntity();
 
         if(model.getContent().isEmpty()) {
@@ -82,7 +82,7 @@ public class CommentService {
         commentEntity.setIsActive(true);
 
         try {
-            commentRepository.add(commentEntity);
+            return commentRepository.add(commentEntity);
         } catch (Exception ex) {
             throw new CustomHttpException("Something went wrong with adding the group", HttpStatus.INTERNAL_SERVER_ERROR);
         }

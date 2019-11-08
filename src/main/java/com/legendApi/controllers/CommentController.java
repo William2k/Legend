@@ -38,7 +38,9 @@ public class CommentController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST)
-    public void addComment(@RequestBody AddComment model) {
-        commentService.addComment(model);
+    public long addComment(@RequestBody AddComment model) {
+        long id = commentService.addComment(model);
+
+        return id;
     }
 }
