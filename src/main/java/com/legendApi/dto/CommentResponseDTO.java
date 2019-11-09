@@ -22,6 +22,7 @@ public class CommentResponseDTO {
     private String dateCreated;
     private String dateModified;
     private String creator;
+    private int level;
     private List<CommentResponseDTO> comments;
 
     public long getId() { return id; }
@@ -41,6 +42,9 @@ public class CommentResponseDTO {
 
     public String getCreator() { return creator; }
     public void setCreator(String creator) { this.creator = creator; }
+
+    public int getLevel() { return level; }
+    public void setLevel(int level) { this.level = level; }
 
     public List<CommentResponseDTO> getComments() { return comments; }
     public void setComments(List<CommentResponseDTO> comments) { this.comments = comments; }

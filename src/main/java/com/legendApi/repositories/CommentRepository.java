@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface CommentRepository extends CRUDRepository<CommentEntity> {
     List<CommentEntity> getChildComments(long id);
+    boolean childCommentsExist(long id);
     List<CommentEntity> getAll(long post, int limit, LocalDateTime lastDateCreated, boolean initial, boolean asc);
 }

@@ -37,6 +37,22 @@ public class CommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
+    public boolean childCommentsExist(long id) {
+        String sql = "SELECT EXISTS( " +
+                "SELECT * FROM legend.comments " +
+                "WHERE parent_comment_id=:id " +
+                "AND is_active = true " +
+                "LIMIT 1)";
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("id", id);
+
+        boolean result = customJdbc.queryForObject(sql, namedParameters, boolean.class);
+
+        return result;
+    }
+
+    @Override
     public List<CommentEntity> getAll() {
         String sql = "SELECT * FROM legend.comments " +
                 " WHERE is_active = true";

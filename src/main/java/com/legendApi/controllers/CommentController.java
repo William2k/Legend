@@ -23,15 +23,15 @@ public class CommentController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public CommentResponseDTO getComment(@PathVariable("id") long id) {
-        CommentResponseDTO result = commentService.getById(id);
+    public CommentResponseDTO getComment(@PathVariable("id") long id, @RequestParam(value = "maxLevel", defaultValue = "4") int maxLevel) {
+        CommentResponseDTO result = commentService.getById(id, maxLevel);
 
         return result;
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<CommentResponseDTO> getCommentsForPost(@RequestParam("post") long post, @RequestParam("limit") int limit, @RequestParam("lastDateCreated") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime lastDateCreated, @RequestParam("initial") boolean initial, @RequestParam("asc") boolean asc) {
-        List<CommentResponseDTO> result = commentService.getAll(post, limit, lastDateCreated, initial, asc);
+    public List<CommentResponseDTO> getCommentsForPost(@RequestParam("post") long post, @RequestParam("limit") int limit, @RequestParam("lastDateCreated") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime lastDateCreated, @RequestParam("initial") boolean initial, @RequestParam(value = "maxLevel", defaultValue = "4") int maxLevel, @RequestParam("asc") boolean asc) {
+        List<CommentResponseDTO> result = commentService.getAll(post, limit, lastDateCreated, initial, maxLevel, asc);
 
         return result;
     }
