@@ -34,7 +34,7 @@ public class GroupService {
         List<GroupEntity> groups = groupRepository.getAllByCreatorId(CurrentUser.getId());
 
         List<GroupResponseDTO> groupDtos = groups
-                .stream().map(GroupResponseDTO::new)
+                .parallelStream().map(GroupResponseDTO::new)
                 .collect(Collectors.toList());
 
         return groupDtos;
@@ -44,7 +44,7 @@ public class GroupService {
         List<GroupEntity> groups = groupRepository.getAll();
 
         List<GroupResponseDTO> groupDtos = groups
-                .stream().map(GroupResponseDTO::new)
+                .parallelStream().map(GroupResponseDTO::new)
                 .collect(Collectors.toList());
 
         return groupDtos;
@@ -54,7 +54,7 @@ public class GroupService {
         List<GroupEntity> groups = groupRepository.getAll(limit, lastCount, initial, asc);
 
         List<GroupResponseDTO> groupDtos = groups
-                .stream().map(GroupResponseDTO::new)
+                .parallelStream().map(GroupResponseDTO::new)
                 .collect(Collectors.toList());
 
         return groupDtos;

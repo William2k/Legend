@@ -21,7 +21,7 @@ public class UserService {
     }
 
     public List<UserResponseDTO> getUsers() {
-        return userRepository.getAll().stream()
+        return userRepository.getAll().parallelStream()
                 .map(UserResponseDTO::new)
                 .collect(Collectors.toList());
     }

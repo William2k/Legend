@@ -37,7 +37,7 @@ public class PostService {
         List<PostEntity> posts = postRepository.getAll(group, limit, lastCount, initial, asc);
 
         List<PostResponseDTO> postDtos = posts
-                .stream().map(PostResponseDTO::new)
+                .parallelStream().map(PostResponseDTO::new)
                 .collect(Collectors.toList());
 
         return postDtos;
