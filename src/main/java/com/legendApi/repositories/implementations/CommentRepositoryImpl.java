@@ -23,10 +23,12 @@ public class CommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
-    public List<CommentEntity> getChildComments(long id) {
+    public List<CommentEntity> getChildComments(long id, boolean asc) {
         String sql = "SELECT * FROM legend.comments " +
                 "WHERE parent_comment_id=:id " +
-                "AND is_active = true";
+                "AND is_active = true ";
+
+        sql += "ORDER BY date_created " + (asc ? "ASC " : "DESC ");
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
             .addValue("id", id);

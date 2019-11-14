@@ -23,8 +23,8 @@ public class CommentController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public CommentResponseDTO getComment(@PathVariable("id") long id, @RequestParam(value = "maxLevel", defaultValue = "4") int maxLevel) {
-        CommentResponseDTO result = commentService.getById(id, maxLevel);
+    public CommentResponseDTO getComment(@PathVariable("id") long id, @RequestParam(value = "maxLevel", defaultValue = "4") int maxLevel, @RequestParam(value = "asc", defaultValue = "false") boolean asc) {
+        CommentResponseDTO result = commentService.getById(id, maxLevel, asc);
 
         return result;
     }

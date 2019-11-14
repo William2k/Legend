@@ -27,50 +27,54 @@ public class CommentService {
         this.userRepository = userRepository;
     }
 
-    public CommentResponseDTO getById(long id, int maxLevel) {
+    public CommentResponseDTO getById(long id, int maxLevel, boolean asc) {
         CommentEntity comment = commentRepository.getById(id);
 
-        return entityToDTO(comment, maxLevel);
+        return entityToDTO(comment, maxLevel, asc);
     }
 
     public List<CommentResponseDTO> getAll(long post, int limit, LocalDateTime lastDateCreated, boolean initial, int maxLevel, boolean asc) {
         List<CommentEntity> comments = commentRepository.getAll(post, limit, lastDateCreated, initial, asc);
 
-        List<CommentResponseDTO> result = entityToDTO(comments, 0, maxLevel);
+        List<CommentResponseDTO> result = entityToDTO(comments, 0, maxLevel, asc);
 
         return result;
     }
 
-    private CommentResponseDTO entityToDTO(CommentEntity comment, int maxLevel) {
+    private CommentResponseDTO entityToDTO(CommentEntity comment, int maxLevel, boolean ascComments) {
         CommentResponseDTO result = new CommentResponseDTO(comment);
 
-        getChildComments(result, 0, maxLevel);
+        getChildComments(result, 0, maxLevel, ascComments);
 
         return result;
     }
 
-    private List<CommentResponseDTO> entityToDTO(List<CommentEntity> comments, int parentLevel, int maxLevel) {
+    private List<CommentResponseDTO> entityToDTO(List<CommentEntity> comments, int parentLevel, int maxLevel, boolean ascComments) {
         List<CommentResponseDTO> result = comments.parallelStream().map(CommentResponseDTO::new).collect(Collectors.toList());
 
-        getChildComments(result, parentLevel, maxLevel);
+        getChildComments(result, parentLevel, maxLevel, ascComments);
 
         return result;
     }
 
-    private void getChildComments(CommentResponseDTO comment, int parentLevel, int maxLevel) {
-            List<CommentEntity> commentEntities = commentRepository.getChildComments(comment.getId());
-            List<CommentResponseDTO> commentsList = entityToDTO(commentEntities, parentLevel, maxLevel);
+    private void getChildComments(CommentResponseDTO comment, int parentLevel, int maxLevel, boolean asc) {
+            List<CommentEntity> commentEntities = commentRepository.getChildComments(comment.getId(), asc);
+            List<CommentResponseDTO> commentsList = entityToDTO(commentEntities, parentLevel, maxLevel, asc);
 
-            getChildComments(commentsList, parentLevel, maxLevel);
+            if(parentLevel == 1) {
+                asc = !asc;
+            }
+
+            getChildComments(commentsList, parentLevel, maxLevel, asc);
             comment.setComments(commentsList);
     }
 
-    private void getChildComments(List<CommentResponseDTO> comments, int parentLevel, int maxLevel) {
+    private void getChildComments(List<CommentResponseDTO> comments, int parentLevel, int maxLevel, boolean asc) {
         comments.parallelStream().forEach(comment -> {
             comment.setLevel(parentLevel + 1);
 
             if(comment.getLevel() < maxLevel) {
-                getChildComments(comment, comment.getLevel(), maxLevel);
+                getChildComments(comment, comment.getLevel(), maxLevel, asc);
             } else {
                 childCommentsExistCheck(comment);
             }
