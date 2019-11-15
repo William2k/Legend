@@ -12,7 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,6 +38,41 @@ public class CommentService {
         List<CommentResponseDTO> result = comments.parallelStream().map(commentEntity -> entityToDTO(commentEntity, 0, maxLevel, asc)).collect(Collectors.toList());
 
         return result;
+
+        //return entityToDtoIterative(comments, maxLevel, asc);
+    }
+
+    private List<CommentResponseDTO> entityToDtoIterative(List<CommentEntity> commentEntities, int maxLevel, boolean ascComments) {
+
+        List<CommentResponseDTO> commentResponseDTOs = commentEntities.parallelStream().map(CommentResponseDTO::new).collect(Collectors.toList());
+
+        Deque<CommentResponseDTO> commentDeque = new ArrayDeque<>(commentResponseDTOs);
+
+        int parentLevel = 0;
+
+        while (!commentDeque.isEmpty()) {
+            CommentResponseDTO commentResponseDTO = commentDeque.pop();
+
+            if(parentLevel < maxLevel) {
+                if(parentLevel == 1) {
+                    ascComments = !ascComments;
+                }
+
+                List<CommentEntity> currentCommentEntities = commentRepository.getChildComments(commentResponseDTO.getId(), ascComments);
+
+                parentLevel += 1;
+
+                List<CommentResponseDTO> commentsList = currentCommentEntities.parallelStream().map(CommentResponseDTO::new).collect(Collectors.toList());
+
+                commentResponseDTO.setComments(commentsList);
+
+                commentDeque.addAll(commentsList);
+            } else {
+                childCommentsExistCheck(commentResponseDTO);
+            }
+        }
+
+        return commentResponseDTOs;
     }
 
     private CommentResponseDTO entityToDTO(CommentEntity comment, int parentLevel, int maxLevel, boolean ascComments) {
