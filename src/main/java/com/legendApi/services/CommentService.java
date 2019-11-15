@@ -5,17 +5,13 @@ import com.legendApi.dto.CommentResponseDTO;
 import com.legendApi.models.AddComment;
 import com.legendApi.models.entities.CommentEntity;
 import com.legendApi.repositories.CommentRepository;
-import com.legendApi.repositories.UserRepository;
 import com.legendApi.security.helpers.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,20 +34,19 @@ public class CommentService {
         List<CommentResponseDTO> result = comments.parallelStream().map(commentEntity -> entityToDTO(commentEntity, 0, maxLevel, asc)).collect(Collectors.toList());
 
         return result;
-
-        //return entityToDtoIterative(comments, maxLevel, asc);
     }
 
     private List<CommentResponseDTO> entityToDtoIterative(List<CommentEntity> commentEntities, int maxLevel, boolean ascComments) {
 
         List<CommentResponseDTO> commentResponseDTOs = commentEntities.parallelStream().map(CommentResponseDTO::new).collect(Collectors.toList());
 
-        Deque<CommentResponseDTO> commentDeque = new ArrayDeque<>(commentResponseDTOs);
-
-        int parentLevel = 0;
+        Deque<KeyValuePair> commentDeque = commentResponseDTOs.parallelStream().map(commentResponseDTO -> new KeyValuePair<>(0, commentResponseDTO)).collect(Collectors.toCollection(ArrayDeque::new));
 
         while (!commentDeque.isEmpty()) {
-            CommentResponseDTO commentResponseDTO = commentDeque.pop();
+            KeyValuePair keyValuePair = commentDeque.pop();
+
+            CommentResponseDTO commentResponseDTO = (CommentResponseDTO) keyValuePair.getValue();
+            int parentLevel = (int) keyValuePair.getKey();
 
             if(parentLevel < maxLevel) {
                 if(parentLevel == 1) {
@@ -60,13 +55,16 @@ public class CommentService {
 
                 List<CommentEntity> currentCommentEntities = commentRepository.getChildComments(commentResponseDTO.getId(), ascComments);
 
-                parentLevel += 1;
-
                 List<CommentResponseDTO> commentsList = currentCommentEntities.parallelStream().map(CommentResponseDTO::new).collect(Collectors.toList());
 
                 commentResponseDTO.setComments(commentsList);
 
-                commentDeque.addAll(commentsList);
+                parentLevel += 1;
+
+                int finalParentLevel = parentLevel;
+                List<KeyValuePair> setCommentsList = commentsList.parallelStream().map(commentResponse -> new KeyValuePair<>(finalParentLevel, commentResponse)).collect(Collectors.toList());
+
+                commentDeque.addAll(setCommentsList);
             } else {
                 childCommentsExistCheck(commentResponseDTO);
             }
@@ -124,5 +122,23 @@ public class CommentService {
         } catch (Exception ex) {
             throw new CustomHttpException("Something went wrong with adding the group", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+}
+
+class KeyValuePair<K, V> {
+    private final K key;
+    private final V Value;
+
+    KeyValuePair(K key, V value) {
+        this.key = key;
+        Value = value;
+    }
+
+    public K getKey() {
+        return key;
+    }
+
+    public V getValue() {
+        return Value;
     }
 }
