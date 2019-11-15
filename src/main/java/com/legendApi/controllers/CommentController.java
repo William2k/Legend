@@ -2,7 +2,6 @@ package com.legendApi.controllers;
 
 import com.legendApi.dto.CommentResponseDTO;
 import com.legendApi.models.AddComment;
-import com.legendApi.models.AddGroup;
 import com.legendApi.services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
