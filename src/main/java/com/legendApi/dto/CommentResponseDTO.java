@@ -43,9 +43,6 @@ public class CommentResponseDTO {
     public String getCreator() { return creator; }
     public void setCreator(String creator) { this.creator = creator; }
 
-    public int getLevel() { return level; }
-    public void setLevel(int level) { this.level = level; }
-
     public List<CommentResponseDTO> getComments() { return comments; }
     public void setComments(List<CommentResponseDTO> comments) { this.comments = comments; }
 }

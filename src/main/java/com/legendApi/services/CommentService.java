@@ -33,7 +33,7 @@ public class CommentService {
 
     public List<CommentResponseDTO> getAll(long post, int limit, LocalDateTime lastDateCreated, boolean initial, int maxLevel, boolean asc) {
         List<CommentEntity> comments = commentRepository.getAll(post, limit, lastDateCreated, initial, asc);
-        List<CommentResponseDTO> result = comments.stream().map(commentEntity -> entityToDTO(commentEntity, 0, maxLevel, asc)).collect(Collectors.toList());
+        List<CommentResponseDTO> result = comments.parallelStream().map(commentEntity -> entityToDTO(commentEntity, 0, maxLevel, asc)).collect(Collectors.toList());
 
         return result;
     }
@@ -56,7 +56,7 @@ public class CommentService {
 
     private void getChildComments(CommentResponseDTO comment, int parentLevel, int maxLevel, boolean asc) {
         List<CommentEntity> commentEntities = commentRepository.getChildComments(comment.getId(), asc);
-        List<CommentResponseDTO> commentsList = commentEntities.stream().map(commentEntity -> entityToDTO(commentEntity, parentLevel + 1, maxLevel, asc)).collect(Collectors.toList());
+        List<CommentResponseDTO> commentsList = commentEntities.parallelStream().map(commentEntity -> entityToDTO(commentEntity, parentLevel + 1, maxLevel, asc)).collect(Collectors.toList());
 
         comment.setComments(commentsList);
     }
