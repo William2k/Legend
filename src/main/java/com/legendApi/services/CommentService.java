@@ -36,43 +36,6 @@ public class CommentService {
         return result;
     }
 
-    private List<CommentResponseDTO> entityToDtoIterative(List<CommentEntity> commentEntities, int maxLevel, boolean ascComments) {
-
-        List<CommentResponseDTO> commentResponseDTOs = commentEntities.parallelStream().map(CommentResponseDTO::new).collect(Collectors.toList());
-
-        Deque<KeyValuePair> commentDeque = commentResponseDTOs.parallelStream().map(commentResponseDTO -> new KeyValuePair<>(0, commentResponseDTO)).collect(Collectors.toCollection(ArrayDeque::new));
-
-        while (!commentDeque.isEmpty()) {
-            KeyValuePair keyValuePair = commentDeque.pop();
-
-            CommentResponseDTO commentResponseDTO = (CommentResponseDTO) keyValuePair.getValue();
-            int parentLevel = (int) keyValuePair.getKey();
-
-            if(parentLevel < maxLevel) {
-                if(parentLevel == 1) {
-                    ascComments = !ascComments;
-                }
-
-                List<CommentEntity> currentCommentEntities = commentRepository.getChildComments(commentResponseDTO.getId(), ascComments);
-
-                List<CommentResponseDTO> commentsList = currentCommentEntities.parallelStream().map(CommentResponseDTO::new).collect(Collectors.toList());
-
-                commentResponseDTO.setComments(commentsList);
-
-                parentLevel += 1;
-
-                int finalParentLevel = parentLevel;
-                List<KeyValuePair> setCommentsList = commentsList.parallelStream().map(commentResponse -> new KeyValuePair<>(finalParentLevel, commentResponse)).collect(Collectors.toList());
-
-                commentDeque.addAll(setCommentsList);
-            } else {
-                childCommentsExistCheck(commentResponseDTO);
-            }
-        }
-
-        return commentResponseDTOs;
-    }
-
     private CommentResponseDTO entityToDTO(CommentEntity comment, int parentLevel, int maxLevel, boolean ascComments) {
         CommentResponseDTO result = new CommentResponseDTO(comment);
 
