@@ -41,13 +41,24 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "{id}/subscribe", method = RequestMethod.POST)
-    public void subscribeToPost(@PathVariable("id") long id, @RequestParam("group") String group) {
-        postService.subscribeToPost(id, group);
+    public long subscribeToPost(@PathVariable("id") long id, @RequestParam("group") String group) {
+        return postService.subscribeToPost(id, group);
     }
 
     @RequestMapping(value = "{id}/unsubscribe", method = RequestMethod.DELETE)
-    public void unsubscribeToPost(@PathVariable("id") long id, @RequestParam("group") String group) {
-        postService.unsubscribeToPost(id, group);
+    public long unsubscribeToPost(@PathVariable("id") long id, @RequestParam("group") String group) {
+        return postService.unsubscribeToPost(id, group);
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(value = "{id}/like", method = RequestMethod.POST)
+    public long likePost(@PathVariable("id") long id) {
+         return postService.likePost(id);
+    }
+
+    @RequestMapping(value = "{id}/unlike", method = RequestMethod.DELETE)
+    public long unlikePost(@PathVariable("id") long id) {
+         return postService.unlikePost(id);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

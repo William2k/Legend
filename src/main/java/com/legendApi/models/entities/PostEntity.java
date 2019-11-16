@@ -12,6 +12,7 @@ public class PostEntity {
     private LocalDateTime dateModified;
     private String creatorUsername;
     private long groupId;
+    private long likes;
     private long subscriberCount;
     private long commentCount;
     private long commentsTodayCount;
@@ -39,6 +40,9 @@ public class PostEntity {
 
     public long getGroupId() {return groupId;}
     public void setGroupId(long value) {groupId = value;}
+
+    public long getLikes() { return likes; }
+    public void setLikes(long likes) { this.likes = likes; }
 
     public long getSubscriberCount() {return subscriberCount;}
     public void setSubscriberCount(long value) {subscriberCount = value;}

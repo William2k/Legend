@@ -67,7 +67,7 @@ public class GroupRepositoryImpl implements GroupRepository {
     }
 
     @Override
-    public void subscribe(long userId, String groupName) {
+    public long subscribe(long userId, String groupName) {
         String sql = "INSERT INTO legend.users_groups_subs(user_id, group_id, is_active) " +
                 "SELECT :userId, id, :isActive " +
                 "FROM legend.groups AS g " +
@@ -79,10 +79,19 @@ public class GroupRepositoryImpl implements GroupRepository {
                 .addValue("isActive", true);
 
         customJdbc.update(sql, namedParameters);
+
+        sql = "UPDATE legend.groups " +
+                "SET subscriber_count = subscriber_count + 1 " +
+                "WHERE id = (SELECT id FROM legend.groups WHERE UPPER(name) = :groupName) " +
+                "RETURNING subscriber_count";
+
+        long newSubs = customJdbc.queryForObject(sql, namedParameters, long.class);
+
+        return newSubs;
     }
 
     @Override
-    public void subscribe(long userId, long groupId) {
+    public long subscribe(long userId, long groupId) {
         String sql = "INSERT INTO legend.users_groups_subs(user_id, group_id, is_active) " +
                 "VALUES (:userId, :groupId, :isActive)";
 
@@ -92,10 +101,19 @@ public class GroupRepositoryImpl implements GroupRepository {
             .addValue("isActive", true);
 
         customJdbc.update(sql, namedParameters);
+
+        sql = "UPDATE legend.groups " +
+                "SET subscriber_count = subscriber_count + 1 " +
+                "WHERE group_id = :groupId " +
+                "RETURNING subscriber_count";
+
+        long newSubs = customJdbc.queryForObject(sql, namedParameters, long.class);
+
+        return newSubs;
     }
 
     @Override
-    public void unsubscribe(long userId, String groupName) {
+    public long unsubscribe(long userId, String groupName) {
         String sql = "DELETE FROM legend.users_groups_subs " +
                 "WHERE user_id = :userId AND group_id = " +
                 "(SELECT g.id FROM legend.groups AS g WHERE UPPER(g.name) = :groupName)";
@@ -105,6 +123,15 @@ public class GroupRepositoryImpl implements GroupRepository {
                 .addValue("groupName", groupName.toUpperCase());
 
         customJdbc.update(sql, namedParameters);
+
+        sql = "UPDATE legend.groups " +
+                "SET subscriber_count = subscriber_count - 1 " +
+                "WHERE id = (SELECT id FROM legend.groups WHERE UPPER(name) = :groupName) " +
+                "RETURNING subscriber_count";
+
+        long newSubs = customJdbc.queryForObject(sql, namedParameters, long.class);
+
+        return newSubs;
     }
 
     @Override

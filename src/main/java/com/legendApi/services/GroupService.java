@@ -60,17 +60,17 @@ public class GroupService {
         return groupDtos;
     }
 
-    public void subscribeToGroup(String groupName) {
+    public long subscribeToGroup(String groupName) {
         try {
-            groupRepository.subscribe(CurrentUser.getId(), groupName);
+            return groupRepository.subscribe(CurrentUser.getId(), groupName);
         } catch (Exception ex) {
             throw new CustomHttpException("Something went wrong subscribing to group", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    public void unsubscribeToGroup(String groupName) {
+    public long unsubscribeToGroup(String groupName) {
         try {
-            groupRepository.unsubscribe(CurrentUser.getId(), groupName);
+            return groupRepository.unsubscribe(CurrentUser.getId(), groupName);
         } catch (Exception ex) {
             throw new CustomHttpException("Something went wrong unsubscribing to group", HttpStatus.INTERNAL_SERVER_ERROR);
         }

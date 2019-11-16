@@ -105,9 +105,9 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public void subscribe(long userId, long postId, String groupName) {
+    public long subscribe(long userId, long postId, String groupName) {
         String sql = "INSERT INTO legend.users_posts_subs(user_id, post_id, is_active, group_id) " +
-                "SELECT :userId, :postId, :isActive, g.id FROM legend.groups AS g WHERE UPPER(name) = :groupName ";
+                "SELECT :userId, :postId, :isActive, g.id FROM legend.groups AS g WHERE UPPER(name) = :groupName";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
                 .addValue("userId", userId)
@@ -116,10 +116,19 @@ public class PostRepositoryImpl implements PostRepository {
                 .addValue("groupName", groupName.toUpperCase());
 
         customJdbc.update(sql, namedParameters);
+
+        sql =  "UPDATE legend.posts " +
+                "SET subscriber_count = subscriber_count + 1 " +
+                "WHERE id = :postId " +
+                "RETURNING subscriber_count";
+
+        long newSubs = customJdbc.queryForObject(sql, namedParameters, long.class);
+
+        return newSubs;
     }
 
     @Override
-    public void unsubscribe(long userId, long postId, String groupName) {
+    public long unsubscribe(long userId, long postId, String groupName) {
         String sql = "DELETE FROM legend.users_posts_subs " +
                 "WHERE user_id = :userId AND post_id = :postId AND group_id = " +
                 "(SELECT g.id FROM legend.groups AS g WHERE UPPER(g.name) = :groupName)";
@@ -130,8 +139,61 @@ public class PostRepositoryImpl implements PostRepository {
                 .addValue("groupName", groupName.toUpperCase());
 
         customJdbc.update(sql, namedParameters);
+
+        sql = "UPDATE legend.posts " +
+                "SET subscriber_count = subscriber_count - 1 " +
+                "WHERE id = :postId " +
+                "RETURNING subscriber_count";
+
+        long newSubs = customJdbc.queryForObject(sql, namedParameters, long.class);
+
+        return newSubs;
     }
 
+    @Override
+    public long like(long userId, long postId) {
+        String sql = "INSERT INTO legend.users_likes(user_id, post_id, is_active) " +
+                "SELECT :userId, :postId, :isActive";
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("postId", postId)
+                .addValue("isActive", true);
+
+        customJdbc.update(sql, namedParameters);
+
+        sql =  "UPDATE legend.posts " +
+                "SET likes = likes + 1 " +
+                "WHERE id = :postId " +
+                "RETURNING likes";
+
+        long newLikes = customJdbc.queryForObject(sql, namedParameters, long.class);
+
+        return newLikes;
+    }
+
+    @Override
+    public long unlike(long userId, long postId) {
+        String sql = "DELETE FROM legend.users_likes " +
+                "WHERE user_id = :userId " +
+                "AND post_id = :postId";
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("postId", postId)
+                .addValue("isActive", true);
+
+        customJdbc.update(sql, namedParameters);
+
+        sql = "UPDATE legend.posts " +
+                "SET likes = likes - 1 " +
+                "WHERE id = :postId " +
+                "RETURNING likes";
+
+        long newLikes = customJdbc.queryForObject(sql, namedParameters, long.class);
+
+        return newLikes;
+    }
 
     @Override
     public List<PostEntity> getAll() {

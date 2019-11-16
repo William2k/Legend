@@ -9,4 +9,8 @@ public interface CommentRepository extends CRUDRepository<CommentEntity> {
     List<CommentEntity> getChildComments(long id, boolean asc);
     boolean childCommentsExist(long id);
     List<CommentEntity> getAll(long post, int limit, LocalDateTime lastDateCreated, boolean initial, boolean asc);
+
+    long like(long userId, long commentId);
+
+    long unlike(long userId, long commentId);
 }

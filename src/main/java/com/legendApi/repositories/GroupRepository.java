@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 public interface GroupRepository extends CRUDRepository<GroupEntity> {
-    void subscribe(long userId, String groupName);
+    long subscribe(long userId, String groupName);
 
-    void subscribe(long userId, long groupId);
+    long subscribe(long userId, long groupId);
 
-    void unsubscribe(long userId, String groupName);
+    long unsubscribe(long userId, String groupName);
 
     boolean existsByName(String name);
 

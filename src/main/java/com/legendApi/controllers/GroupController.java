@@ -46,13 +46,13 @@ public class GroupController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "{name}/subscribe", method = RequestMethod.POST)
-    public void subscribeToGroup(@PathVariable("name") String name) {
-        groupService.subscribeToGroup(name);
+    public long subscribeToGroup(@PathVariable("name") String name) {
+        return groupService.subscribeToGroup(name);
     }
 
     @RequestMapping(value = "{name}/unsubscribe", method = RequestMethod.DELETE)
-    public void unsubscribeToGroup(@PathVariable("name") String name) {
-        groupService.unsubscribeToGroup(name);
+    public long unsubscribeToGroup(@PathVariable("name") String name) {
+        return groupService.unsubscribeToGroup(name);
     }
 
     @RequestMapping(value = "subscribed", method = RequestMethod.GET)

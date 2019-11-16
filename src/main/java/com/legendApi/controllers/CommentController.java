@@ -36,6 +36,17 @@ public class CommentController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(value = "{id}/like", method = RequestMethod.POST)
+    public long likePost(@PathVariable("id") long id) {
+         return commentService.likeComment(id);
+    }
+
+    @RequestMapping(value = "{id}/unlike", method = RequestMethod.DELETE)
+    public long unlikePost(@PathVariable("id") long id) {
+        return commentService.unlikeComment(id);
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST)
     public long addComment(@RequestBody AddComment model) {
         long id = commentService.addComment(model);

@@ -43,20 +43,28 @@ public class PostService {
         return postDtos;
     }
 
-    public void subscribeToPost(long postId, String group) {
+    public long subscribeToPost(long postId, String group) {
         try {
-            postRepository.subscribe(CurrentUser.getId(), postId, group);
+            return postRepository.subscribe(CurrentUser.getId(), postId, group);
         } catch (Exception e) {
             throw new CustomHttpException("Something went wrong subscribing to post", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    public void unsubscribeToPost(long postId, String group) {
+    public long unsubscribeToPost(long postId, String group) {
         try {
-            postRepository.unsubscribe(CurrentUser.getId(), postId, group);
+            return postRepository.unsubscribe(CurrentUser.getId(), postId, group);
         } catch (Exception e) {
             throw new CustomHttpException("Something went wrong unsubscribing to post", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public long likePost(long postId) {
+        return postRepository.like(CurrentUser.getId(), postId);
+    }
+
+    public long unlikePost(long postId) {
+        return postRepository.unlike(CurrentUser.getId(), postId);
     }
 
     public Map<Long, String> getSimpleSubscribedPost() {

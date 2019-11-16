@@ -35,12 +35,13 @@ public class RowMappings {
         post.setCreatorUsername(rs.getString("creator_username"));
         post.setDateCreated(rs.getObject("date_created", LocalDateTime.class));
         post.setDateModified(rs.getObject("date_modified", LocalDateTime.class));
-        post.setGroupId(rs.getInt("group_id"));
+        post.setGroupId(rs.getLong("group_id"));
         post.setContent(rs.getString("content"));
         post.setIsActive(rs.getBoolean("is_active"));
-        post.setSubscriberCount(rs.getInt("subscriber_count"));
-        post.setCommentCount(rs.getInt("comment_count"));
-        post.setCommentsTodayCount(rs.getInt("comments_today"));
+        post.setLikes(rs.getLong("likes"));
+        post.setSubscriberCount(rs.getLong("subscriber_count"));
+        post.setCommentCount(rs.getLong("comment_count"));
+        post.setCommentsTodayCount(rs.getLong("comments_today"));
 
         return post;
     }
@@ -50,6 +51,7 @@ public class RowMappings {
         comment.setId(rs.getLong("id"));
         comment.setContent(rs.getString("content"));
         comment.setPostId(rs.getInt("post_id"));
+        comment.setLikes(rs.getLong("likes"));
         comment.setCreatorUsername(rs.getString("creator_username"));
         comment.setParentCommentId(rs.getInt("parent_comment_id"));
         comment.setDateCreated(rs.getObject("date_created", LocalDateTime.class));

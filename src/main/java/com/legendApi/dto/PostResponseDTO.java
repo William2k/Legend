@@ -19,6 +19,7 @@ public class PostResponseDTO {
         setDateModified(postEntity.getDateModified() != null ? postEntity.getDateModified().toString() : null);
         setCreator(postEntity.getCreatorUsername());
         setIsActive(postEntity.getIsActive());
+        setLikes(postEntity.getLikes());
     }
 
     private long id;
@@ -30,6 +31,7 @@ public class PostResponseDTO {
     private String dateCreated;
     private String dateModified;
     private String creator;
+    private long likes;
     private boolean isActive;
 
     public long getId() {return id;}
@@ -61,4 +63,7 @@ public class PostResponseDTO {
 
     public boolean getIsActive() {return  isActive;}
     public void  setIsActive(boolean value) {isActive = value;}
+
+    public long getLikes() { return likes; }
+    public void setLikes(long likes) { this.likes = likes; }
 }

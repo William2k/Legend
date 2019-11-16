@@ -16,9 +16,13 @@ public interface PostRepository extends CRUDRepository<PostEntity> {
 
     Map<Long, String> getSimpleSubscribedPosts(long userId);
 
-    void subscribe(long userId, long postId, String groupName);
+    long subscribe(long userId, long postId, String groupName);
 
-    void unsubscribe(long userId, long postId, String groupName);
+    long unsubscribe(long userId, long postId, String groupName);
+
+    long like(long userId, long postId);
+
+    long unlike(long userId, long postId);
 
     List<PostEntity> getAll(String group, int limit, long lastCount, boolean initial, boolean asc);
 }

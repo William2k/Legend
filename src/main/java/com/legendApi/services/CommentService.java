@@ -67,6 +67,14 @@ public class CommentService {
         }
     }
 
+    public long likeComment(long commentId) {
+        return commentRepository.like(CurrentUser.getId(), commentId);
+    }
+
+    public long unlikeComment(long commentId) {
+        return commentRepository.unlike(CurrentUser.getId(), commentId);
+    }
+
     public long addComment(AddComment model) {
         CommentEntity commentEntity = new CommentEntity();
 
@@ -85,23 +93,5 @@ public class CommentService {
         } catch (Exception ex) {
             throw new CustomHttpException("Something went wrong with adding the group", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-}
-
-class KeyValuePair<K, V> {
-    private final K key;
-    private final V Value;
-
-    KeyValuePair(K key, V value) {
-        this.key = key;
-        Value = value;
-    }
-
-    public K getKey() {
-        return key;
-    }
-
-    public V getValue() {
-        return Value;
     }
 }

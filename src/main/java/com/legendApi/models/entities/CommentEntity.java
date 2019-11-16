@@ -12,6 +12,7 @@ public class CommentEntity {
     private long postId;
     private long parentCommentId;
     private String creatorUsername;
+    private long likes;
 
     public long getId() {return id;}
     public void setId(long value) {id = value;}
@@ -27,6 +28,9 @@ public class CommentEntity {
 
     public LocalDateTime getDateModified() {return  dateModified;}
     public void  setDateModified(LocalDateTime value) {dateModified = value;}
+
+    public long getLikes() { return likes; }
+    public void setLikes(long likes) { this.likes = likes; }
 
     public long getPostId() {return postId;}
     public void setPostId(long value) {postId = value;}

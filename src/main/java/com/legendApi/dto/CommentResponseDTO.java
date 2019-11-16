@@ -14,6 +14,7 @@ public class CommentResponseDTO {
         setDateModified(commentEntity.getDateModified() != null ? commentEntity.getDateModified().toString() : null);
         setIsActive(commentEntity.getIsActive());
         setCreator(commentEntity.getCreatorUsername());
+        setLikes(commentEntity.getLikes());
     }
 
     private long id;
@@ -22,8 +23,8 @@ public class CommentResponseDTO {
     private String dateCreated;
     private String dateModified;
     private String creator;
-    private int level;
     private List<CommentResponseDTO> comments;
+    private long likes;
 
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
@@ -45,4 +46,7 @@ public class CommentResponseDTO {
 
     public List<CommentResponseDTO> getComments() { return comments; }
     public void setComments(List<CommentResponseDTO> comments) { this.comments = comments; }
+
+    public long getLikes() { return likes; }
+    public void setLikes(long likes) { this.likes = likes; }
 }

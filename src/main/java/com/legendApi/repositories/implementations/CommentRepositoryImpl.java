@@ -89,6 +89,51 @@ public class CommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
+    public long like(long userId, long commentId) {
+        String sql = "INSERT INTO legend.users_likes(user_id, comment_id, is_active) " +
+                "SELECT :userId, :commentId, :isActive";
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("commentId", commentId)
+                .addValue("isActive", true);
+
+        customJdbc.update(sql, namedParameters);
+
+        sql =   "UPDATE legend.comments " +
+                "SET likes = likes + 1 " +
+                "WHERE id = :commentId " +
+                "RETURNING likes";
+
+        long newLikes = customJdbc.queryForObject(sql, namedParameters, long.class);
+
+        return newLikes;
+    }
+
+    @Override
+    public long unlike(long userId, long commentId) {
+        String sql = "DELETE FROM legend.users_likes " +
+                "WHERE user_id = :userId " +
+                "AND comment_id = :commentId";
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("commentId", commentId)
+                .addValue("isActive", true);
+
+        customJdbc.update(sql, namedParameters);
+
+        sql =  "UPDATE legend.comments " +
+                "SET likes = likes - 1 " +
+                "WHERE id = :commentId " +
+                "RETURNING likes";
+
+        long newLikes = customJdbc.queryForObject(sql, namedParameters, long.class);
+
+        return newLikes;
+    }
+
+    @Override
     public CommentEntity getById(long id) {
         String sql = "SELECT * FROM legend.comments " +
                 "WHERE id = :id";
