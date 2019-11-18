@@ -6,6 +6,7 @@ import com.legendApi.models.entities.UserEntity;
 import com.legendApi.repositories.PostRepository;
 import com.legendApi.repositories.implementations.rowMappings.RowMappings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
@@ -151,19 +152,22 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public long like(long userId, long postId) {
-        String sql = "INSERT INTO legend.users_likes(user_id, post_id, is_active) " +
-                "SELECT :userId, :postId, :isActive";
-
+    public long addLike(long userId, long postId, boolean liked) {
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
                 .addValue("userId", userId)
                 .addValue("postId", postId)
+                .addValue("liked", liked)
                 .addValue("isActive", true);
+
+        removeLike(userId, postId);
+
+        String sql = "INSERT INTO legend.users_likes(user_id, post_id, liked, is_active) " +
+                "VALUES (:userId, :postId, :liked, :isActive)";
 
         customJdbc.update(sql, namedParameters);
 
         sql =  "UPDATE legend.posts " +
-                "SET likes = likes + 1 " +
+                (liked ? "SET likes = likes + 1 " : "SET likes = likes - 1 ") +
                 "WHERE id = :postId " +
                 "RETURNING likes";
 
@@ -173,20 +177,29 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public long unlike(long userId, long postId) {
+    public long removeLike(long userId, long postId) {
         String sql = "DELETE FROM legend.users_likes " +
                 "WHERE user_id = :userId " +
-                "AND post_id = :postId";
+                "AND post_id = :postId " +
+                "RETURNING liked";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
                 .addValue("userId", userId)
                 .addValue("postId", postId)
                 .addValue("isActive", true);
 
-        customJdbc.update(sql, namedParameters);
+        boolean liked;
+
+        try{
+            liked = customJdbc.queryForObject(sql, namedParameters, boolean.class);
+        } catch (EmptyResultDataAccessException ex) {
+            sql = "SELECT likes FROM legend.posts WHERE id = :postId";
+
+            return customJdbc.queryForObject(sql, namedParameters, long.class);
+        }
 
         sql = "UPDATE legend.posts " +
-                "SET likes = likes - 1 " +
+                (liked ? "SET likes = likes - 1 " : "SET likes = likes + 1 ") +
                 "WHERE id = :postId " +
                 "RETURNING likes";
 

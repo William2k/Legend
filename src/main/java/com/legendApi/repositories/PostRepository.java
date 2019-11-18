@@ -20,9 +20,9 @@ public interface PostRepository extends CRUDRepository<PostEntity> {
 
     long unsubscribe(long userId, long postId, String groupName);
 
-    long like(long userId, long postId);
+    long addLike(long userId, long postId, boolean liked);
 
-    long unlike(long userId, long postId);
+    long removeLike(long userId, long postId);
 
     List<PostEntity> getAll(String group, int limit, long lastCount, boolean initial, boolean asc);
 }

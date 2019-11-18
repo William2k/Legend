@@ -33,7 +33,7 @@ public class GroupRepositoryImpl implements GroupRepository {
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
                 .addValue("name", name.toUpperCase());
 
-        boolean result = customJdbc.queryForObject(sql, namedParameters, boolean.class); // ignore error postgresql will always return true or false for this
+        boolean result = customJdbc.queryForObject(sql, namedParameters, boolean.class);
 
         return result;
     }

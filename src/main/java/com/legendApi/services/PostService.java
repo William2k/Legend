@@ -59,12 +59,20 @@ public class PostService {
         }
     }
 
-    public long likePost(long postId) {
-        return postRepository.like(CurrentUser.getId(), postId);
+    public long addLike(long postId, boolean liked) {
+        try {
+            return postRepository.addLike(CurrentUser.getId(), postId, liked);
+        } catch (Exception ex) {
+            throw new CustomHttpException("Something went wrong with liking post", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public long unlikePost(long postId) {
-        return postRepository.unlike(CurrentUser.getId(), postId);
+    public long removeLike(long postId) {
+        try {
+            return postRepository.removeLike(CurrentUser.getId(), postId);
+        } catch (Exception ex) {
+            throw new CustomHttpException("Something went wrong with unliking post", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     public Map<Long, String> getSimpleSubscribedPost() {

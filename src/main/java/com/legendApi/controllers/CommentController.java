@@ -37,13 +37,18 @@ public class CommentController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "{id}/like", method = RequestMethod.POST)
-    public long likePost(@PathVariable("id") long id) {
-         return commentService.likeComment(id);
+    public long likeComment(@PathVariable("id") long id) {
+         return commentService.addLike(id, true);
     }
 
     @RequestMapping(value = "{id}/unlike", method = RequestMethod.DELETE)
-    public long unlikePost(@PathVariable("id") long id) {
-        return commentService.unlikeComment(id);
+    public long unlikeComment(@PathVariable("id") long id) {
+        return commentService.addLike(id, false);
+    }
+
+    @RequestMapping(value = "{id}/removeLike", method = RequestMethod.DELETE)
+    public long removeLikeComment(@PathVariable("id") long id) {
+        return commentService.removeLike(id);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

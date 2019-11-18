@@ -5,6 +5,7 @@ import com.legendApi.models.entities.CommentEntity;
 import com.legendApi.repositories.CommentRepository;
 import com.legendApi.repositories.implementations.rowMappings.RowMappings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class CommentRepositoryImpl implements CommentRepository {
@@ -89,19 +91,23 @@ public class CommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
-    public long like(long userId, long commentId) {
-        String sql = "INSERT INTO legend.users_likes(user_id, comment_id, is_active) " +
-                "SELECT :userId, :commentId, :isActive";
+    public long addLike(long userId, long commentId, boolean liked) {
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
                 .addValue("userId", userId)
                 .addValue("commentId", commentId)
+                .addValue("liked", liked)
                 .addValue("isActive", true);
+
+        removeLike(userId, commentId);
+
+        String sql = "INSERT INTO legend.users_likes(user_id, comment_id, liked, is_active) " +
+                "VALUES (:userId, :commentId, :liked, :isActive)";
 
         customJdbc.update(sql, namedParameters);
 
         sql =   "UPDATE legend.comments " +
-                "SET likes = likes + 1 " +
+                (liked ? "SET likes = likes + 1 " : "SET likes = likes - 1 ") +
                 "WHERE id = :commentId " +
                 "RETURNING likes";
 
@@ -111,26 +117,33 @@ public class CommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
-    public long unlike(long userId, long commentId) {
+    public long removeLike(long userId, long commentId) {
         String sql = "DELETE FROM legend.users_likes " +
                 "WHERE user_id = :userId " +
-                "AND comment_id = :commentId";
+                "AND comment_id = :commentId " +
+                "RETURNING liked";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
                 .addValue("userId", userId)
                 .addValue("commentId", commentId)
                 .addValue("isActive", true);
 
-        customJdbc.update(sql, namedParameters);
+        boolean liked;
+
+        try{
+            liked = customJdbc.queryForObject(sql, namedParameters, boolean.class);
+        } catch (EmptyResultDataAccessException ex) {
+            sql = "SELECT likes FROM legend.comments WHERE id = :commentId";
+
+            return customJdbc.queryForObject(sql, namedParameters, long.class);
+        }
 
         sql =  "UPDATE legend.comments " +
-                "SET likes = likes - 1 " +
+                (liked ? "SET likes = likes - 1 " : "SET likes = likes + 1 ") +
                 "WHERE id = :commentId " +
                 "RETURNING likes";
 
-        long newLikes = customJdbc.queryForObject(sql, namedParameters, long.class);
-
-        return newLikes;
+        return customJdbc.queryForObject(sql, namedParameters, long.class);
     }
 
     @Override

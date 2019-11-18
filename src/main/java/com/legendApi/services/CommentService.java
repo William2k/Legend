@@ -67,12 +67,20 @@ public class CommentService {
         }
     }
 
-    public long likeComment(long commentId) {
-        return commentRepository.like(CurrentUser.getId(), commentId);
+    public long addLike(long commentId, boolean liked) {
+        try {
+            return commentRepository.addLike(CurrentUser.getId(), commentId, liked);
+        } catch (Exception ex) {
+            throw new CustomHttpException("Something went wrong with liking comment", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public long unlikeComment(long commentId) {
-        return commentRepository.unlike(CurrentUser.getId(), commentId);
+    public long removeLike(long commentId) {
+        try {
+            return commentRepository.removeLike(CurrentUser.getId(), commentId);
+        } catch (Exception ex) {
+            throw new CustomHttpException("Something went wrong with unliking comment", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     public long addComment(AddComment model) {

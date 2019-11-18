@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class CustomJdbc extends NamedParameterJdbcTemplate {
     public CustomJdbc(DataSource dataSource) {
@@ -28,15 +29,7 @@ public class CustomJdbc extends NamedParameterJdbcTemplate {
         }
     }
 
-    public <T> T queryForNullableObject(String sql, MapSqlParameterSource parameters, RowMapper<T> rowMapper) throws DataAccessException {
-        List<T> results = query(sql, parameters, rowMapper);
-
-        return queryReturn(results);
-    }
-
-    public <T> T queryForNullableObject(String sql,  RowMapper<T> rowMapper) throws DataAccessException {
-        List<T> results = query(sql, rowMapper);
-
-        return queryReturn(results);
+    public <T> T queryForNullableObject(String sql, MapSqlParameterSource parameters, T defaultValue) throws DataAccessException {
+        return Optional.ofNullable((T) queryForObject(sql, parameters, defaultValue.getClass())).orElse(defaultValue);
     }
 }

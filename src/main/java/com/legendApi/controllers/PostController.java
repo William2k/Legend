@@ -53,12 +53,17 @@ public class PostController {
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "{id}/like", method = RequestMethod.POST)
     public long likePost(@PathVariable("id") long id) {
-         return postService.likePost(id);
+         return postService.addLike(id, true);
     }
 
     @RequestMapping(value = "{id}/unlike", method = RequestMethod.DELETE)
     public long unlikePost(@PathVariable("id") long id) {
-         return postService.unlikePost(id);
+         return postService.addLike(id, false);
+    }
+
+    @RequestMapping(value = "{id}/removeLike", method = RequestMethod.DELETE)
+    public long removeLikePost(@PathVariable("id") long id) {
+        return postService.removeLike(id);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
