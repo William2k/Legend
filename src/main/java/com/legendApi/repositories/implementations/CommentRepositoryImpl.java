@@ -25,15 +25,17 @@ public class CommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
-    public List<CommentEntity> getChildComments(long id, boolean asc) {
-        String sql = "SELECT * FROM legend.comments " +
+    public List<CommentEntity> getChildComments(long id, boolean asc, long userId) {
+        String sql = "SELECT *, (SELECT liked FROM legend.users_likes WHERE user_id = :userId AND comment_id = id) " +
+                "FROM legend.comments " +
                 "WHERE parent_comment_id=:id " +
                 "AND is_active = true ";
 
         sql += "ORDER BY date_created " + (asc ? "ASC " : "DESC ");
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
-            .addValue("id", id);
+                .addValue("id", id)
+                .addValue("userId", userId);
 
         List<CommentEntity> result = customJdbc.query(sql, namedParameters, RowMappings::commentRowMapping);
 
@@ -57,18 +59,9 @@ public class CommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
-    public List<CommentEntity> getAll() {
-        String sql = "SELECT * FROM legend.comments " +
-                " WHERE is_active = true";
-
-        List<CommentEntity> result = customJdbc.query(sql, RowMappings::commentRowMapping);
-
-        return result;
-    }
-
-    @Override
-    public List<CommentEntity> getAll(long post, int limit, LocalDateTime lastDateCreated, boolean initial, boolean asc) {
-        String sql = "SELECT * FROM legend.comments " +
+    public List<CommentEntity> getAll(long post, int limit, LocalDateTime lastDateCreated, boolean initial, boolean asc, long userId) {
+        String sql = "SELECT *, (SELECT liked FROM legend.users_likes WHERE user_id = :userId AND comment_id = id) " +
+                "FROM legend.comments " +
                 "WHERE is_active = true " +
                 "AND post_id = :post " +
                 "AND parent_comment_id = 0 ";
@@ -83,7 +76,8 @@ public class CommentRepositoryImpl implements CommentRepository {
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
                 .addValue("post", post)
                 .addValue("lastDateCreated", lastDateCreated)
-                .addValue("limit", limit);
+                .addValue("limit", limit)
+                .addValue("userId", userId);
 
         List<CommentEntity> result = customJdbc.query(sql, namedParameters, RowMappings::commentRowMapping);
 
@@ -147,12 +141,14 @@ public class CommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
-    public CommentEntity getById(long id) {
-        String sql = "SELECT * FROM legend.comments " +
+    public CommentEntity getById(long id, long userId) {
+        String sql = "SELECT *, (SELECT liked FROM legend.users_likes WHERE user_id = :userId AND comment_id = id) " +
+                "FROM legend.comments " +
                 "WHERE id = :id";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
-            .addValue("id", id);
+                .addValue("id", id)
+                .addValue("userId", userId);
 
         CommentEntity result = customJdbc.queryForObject(sql, namedParameters, RowMappings::commentRowMapping);
 

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +23,10 @@ public class GroupService {
         this.groupRepository = groupRepository;
     }
 
+    private long currentUserId() {
+        return Optional.ofNullable(CurrentUser.getId()).orElse((long) 0);
+    }
+
     public GroupResponseDTO getByName(String name) {
         GroupResponseDTO group = new GroupResponseDTO(groupRepository.getGroupByName(name));
 
@@ -31,7 +36,7 @@ public class GroupService {
     }
 
     public List<GroupResponseDTO> getUserGroups() {
-        List<GroupEntity> groups = groupRepository.getAllByCreatorId(CurrentUser.getId());
+        List<GroupEntity> groups = groupRepository.getAllByCreatorId(currentUserId());
 
         List<GroupResponseDTO> groupDtos = groups
                 .parallelStream().map(GroupResponseDTO::new)
@@ -62,7 +67,7 @@ public class GroupService {
 
     public long subscribeToGroup(String groupName) {
         try {
-            return groupRepository.subscribe(CurrentUser.getId(), groupName);
+            return groupRepository.subscribe(currentUserId(), groupName);
         } catch (Exception ex) {
             throw new CustomHttpException("Something went wrong subscribing to group", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -70,14 +75,14 @@ public class GroupService {
 
     public long unsubscribeToGroup(String groupName) {
         try {
-            return groupRepository.unsubscribe(CurrentUser.getId(), groupName);
+            return groupRepository.unsubscribe(currentUserId(), groupName);
         } catch (Exception ex) {
             throw new CustomHttpException("Something went wrong unsubscribing to group", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     public List<String> getSimpleSubscribedGroups() {
-        return groupRepository.getSimpleSubscribedGroups(CurrentUser.getId());
+        return groupRepository.getSimpleSubscribedGroups(currentUserId());
     }
 
    public void addGroup(AddGroup group) {

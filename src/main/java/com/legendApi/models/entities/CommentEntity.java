@@ -13,6 +13,7 @@ public class CommentEntity {
     private long parentCommentId;
     private String creatorUsername;
     private long likes;
+    private Boolean liked;
 
     public long getId() {return id;}
     public void setId(long value) {id = value;}
@@ -40,4 +41,7 @@ public class CommentEntity {
 
     public String getCreatorUsername() {return creatorUsername;}
     public void setCreatorUsername(String value) {creatorUsername = value;}
+
+    public Boolean isLiked() { return liked; }
+    public void setLiked(Boolean liked) { this.liked = liked; }
 }

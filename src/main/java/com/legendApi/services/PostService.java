@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,14 +28,24 @@ public class PostService {
         this.groupRepository = groupRepository;
     }
 
+    private long currentUserId() {
+        return Optional.ofNullable(CurrentUser.getId()).orElse((long) 0);
+    }
+
     public PostResponseDTO getPostById(long id) {
-        PostResponseDTO result = new PostResponseDTO(postRepository.getById(id));
+        PostResponseDTO result = new PostResponseDTO(postRepository.getById(id, currentUserId()));
 
         return result;
     }
 
     public List<PostResponseDTO> getAllPosts(String group, int limit, long lastCount, boolean initial, boolean asc) {
-        List<PostEntity> posts = postRepository.getAll(group, limit, lastCount, initial, asc);
+        long currentUserId = 0;
+
+        try{
+            currentUserId = currentUserId();
+        } catch (Exception ignored) {}
+
+        List<PostEntity> posts = postRepository.getAll(group, limit, lastCount, initial, asc, currentUserId);
 
         List<PostResponseDTO> postDtos = posts
                 .parallelStream().map(PostResponseDTO::new)
@@ -45,7 +56,7 @@ public class PostService {
 
     public long subscribeToPost(long postId, String group) {
         try {
-            return postRepository.subscribe(CurrentUser.getId(), postId, group);
+            return postRepository.subscribe(currentUserId(), postId, group);
         } catch (Exception e) {
             throw new CustomHttpException("Something went wrong subscribing to post", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -53,7 +64,7 @@ public class PostService {
 
     public long unsubscribeToPost(long postId, String group) {
         try {
-            return postRepository.unsubscribe(CurrentUser.getId(), postId, group);
+            return postRepository.unsubscribe(currentUserId(), postId, group);
         } catch (Exception e) {
             throw new CustomHttpException("Something went wrong unsubscribing to post", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -61,7 +72,7 @@ public class PostService {
 
     public long addLike(long postId, boolean liked) {
         try {
-            return postRepository.addLike(CurrentUser.getId(), postId, liked);
+            return postRepository.addLike(currentUserId(), postId, liked);
         } catch (Exception ex) {
             throw new CustomHttpException("Something went wrong with liking post", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -69,14 +80,14 @@ public class PostService {
 
     public long removeLike(long postId) {
         try {
-            return postRepository.removeLike(CurrentUser.getId(), postId);
+            return postRepository.removeLike(currentUserId(), postId);
         } catch (Exception ex) {
             throw new CustomHttpException("Something went wrong with unliking post", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     public Map<Long, String> getSimpleSubscribedPost() {
-        return postRepository.getSimpleSubscribedPosts(CurrentUser.getId());
+        return postRepository.getSimpleSubscribedPosts(currentUserId());
     }
 
     public void addPost(AddPost model) {

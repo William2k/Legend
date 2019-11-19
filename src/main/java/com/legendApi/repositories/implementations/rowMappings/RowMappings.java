@@ -43,6 +43,11 @@ public class RowMappings {
         post.setCommentCount(rs.getLong("comment_count"));
         post.setCommentsTodayCount(rs.getLong("comments_today"));
 
+        Boolean liked = rs.getBoolean("liked");
+        if (rs.wasNull()) liked = null;
+
+        post.setLiked(liked);
+
         return post;
     }
 
@@ -57,6 +62,12 @@ public class RowMappings {
         comment.setDateCreated(rs.getObject("date_created", LocalDateTime.class));
         comment.setDateModified(rs.getObject("date_modified", LocalDateTime.class));
         comment.setIsActive(rs.getBoolean("is_active"));
+
+        Boolean liked = rs.getBoolean("liked");
+        if (rs.wasNull()) liked = null;
+
+        comment.setLiked(liked);
+
         return comment;
     }
 

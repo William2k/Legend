@@ -16,8 +16,12 @@ public class CurrentUser {
         return parser.parseMap(JwtHelper.decode(token).getClaims());
     }
 
-    public static long getId() {
-        return Long.parseLong(GetClaims().get("userId").toString());
+    public static Long getId() {
+        try {
+            return Long.parseLong(GetClaims().get("userId").toString());
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     public static String getUsername() {

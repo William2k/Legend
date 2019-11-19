@@ -15,6 +15,7 @@ public class CommentResponseDTO {
         setIsActive(commentEntity.getIsActive());
         setCreator(commentEntity.getCreatorUsername());
         setLikes(commentEntity.getLikes());
+        setLiked(commentEntity.isLiked());
     }
 
     private long id;
@@ -25,6 +26,7 @@ public class CommentResponseDTO {
     private String creator;
     private List<CommentResponseDTO> comments;
     private long likes;
+    private Boolean liked;
 
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
@@ -49,4 +51,7 @@ public class CommentResponseDTO {
 
     public long getLikes() { return likes; }
     public void setLikes(long likes) { this.likes = likes; }
+
+    public Boolean isLiked() { return liked; }
+    public void setLiked(Boolean liked) { this.liked = liked; }
 }

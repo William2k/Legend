@@ -20,6 +20,7 @@ public class PostResponseDTO {
         setCreator(postEntity.getCreatorUsername());
         setIsActive(postEntity.getIsActive());
         setLikes(postEntity.getLikes());
+        setLiked(postEntity.isLiked());
     }
 
     private long id;
@@ -33,6 +34,7 @@ public class PostResponseDTO {
     private String creator;
     private long likes;
     private boolean isActive;
+    private Boolean liked;
 
     public long getId() {return id;}
     public void setId(long value) {id = value;}
@@ -66,4 +68,7 @@ public class PostResponseDTO {
 
     public long getLikes() { return likes; }
     public void setLikes(long likes) { this.likes = likes; }
+
+    public Boolean isLiked() { return liked; }
+    public void setLiked(Boolean liked) { this.liked = liked; }
 }

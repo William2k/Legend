@@ -16,6 +16,7 @@ public class PostEntity {
     private long subscriberCount;
     private long commentCount;
     private long commentsTodayCount;
+    private Boolean liked;
 
     public long getId() {return id;}
     public void setId(long value) {id = value;}
@@ -52,4 +53,7 @@ public class PostEntity {
 
     public long getCommentsTodayCount() { return commentsTodayCount;}
     public void setCommentsTodayCount(long value) { commentsTodayCount = value; }
+
+    public Boolean isLiked() { return liked; }
+    public void setLiked(Boolean liked) { this.liked = liked; }
 }

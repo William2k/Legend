@@ -23,20 +23,27 @@ public class CommentService {
         this.commentRepository = commentRepository;
     }
 
-    public CommentResponseDTO getById(long id, int maxLevel, boolean asc) {
-        CommentEntity comment = commentRepository.getById(id);
+    private long currentUserId() {
+        return Optional.ofNullable(CurrentUser.getId()).orElse((long) 0);
+    }
 
-        return entityToDTO(comment, 0, maxLevel, asc);
+    public CommentResponseDTO getById(long id, int maxLevel, boolean asc) {
+        long currentUserId = currentUserId();
+
+        CommentEntity comment = commentRepository.getById(id, currentUserId);
+
+        return entityToDTO(comment, 0, maxLevel, asc, currentUserId);
     }
 
     public List<CommentResponseDTO> getAll(long post, int limit, LocalDateTime lastDateCreated, boolean initial, int maxLevel, boolean asc) {
-        List<CommentEntity> comments = commentRepository.getAll(post, limit, lastDateCreated, initial, asc);
-        List<CommentResponseDTO> result = comments.parallelStream().map(commentEntity -> entityToDTO(commentEntity, 0, maxLevel, asc)).collect(Collectors.toList());
+        long currentUserId = currentUserId();
 
-        return result;
+        List<CommentEntity> comments = commentRepository.getAll(post, limit, lastDateCreated, initial, asc, currentUserId);
+
+        return comments.parallelStream().map(commentEntity -> entityToDTO(commentEntity, 0, maxLevel, asc, currentUserId)).collect(Collectors.toList());
     }
 
-    private CommentResponseDTO entityToDTO(CommentEntity comment, int parentLevel, int maxLevel, boolean ascComments) {
+    private CommentResponseDTO entityToDTO(CommentEntity comment, int parentLevel, int maxLevel, boolean ascComments, long currentUserId) {
         CommentResponseDTO result = new CommentResponseDTO(comment);
 
         if(parentLevel < maxLevel) {
@@ -44,7 +51,7 @@ public class CommentService {
                 ascComments = !ascComments;
             }
 
-            getChildComments(result, parentLevel, maxLevel, ascComments);
+            getChildComments(result, parentLevel, maxLevel, ascComments, currentUserId);
         } else {
             childCommentsExistCheck(result);
         }
@@ -52,9 +59,9 @@ public class CommentService {
         return result;
     }
 
-    private void getChildComments(CommentResponseDTO comment, int parentLevel, int maxLevel, boolean asc) {
-        List<CommentEntity> commentEntities = commentRepository.getChildComments(comment.getId(), asc);
-        List<CommentResponseDTO> commentsList = commentEntities.parallelStream().map(commentEntity -> entityToDTO(commentEntity, parentLevel + 1, maxLevel, asc)).collect(Collectors.toList());
+    private void getChildComments(CommentResponseDTO comment, int parentLevel, int maxLevel, boolean asc, long currentUserId) {
+        List<CommentEntity> commentEntities = commentRepository.getChildComments(comment.getId(), asc, currentUserId);
+        List<CommentResponseDTO> commentsList = commentEntities.parallelStream().map(commentEntity -> entityToDTO(commentEntity, parentLevel + 1, maxLevel, asc, currentUserId)).collect(Collectors.toList());
 
         comment.setComments(commentsList);
     }
@@ -69,7 +76,7 @@ public class CommentService {
 
     public long addLike(long commentId, boolean liked) {
         try {
-            return commentRepository.addLike(CurrentUser.getId(), commentId, liked);
+            return commentRepository.addLike(currentUserId(), commentId, liked);
         } catch (Exception ex) {
             throw new CustomHttpException("Something went wrong with liking comment", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -77,7 +84,7 @@ public class CommentService {
 
     public long removeLike(long commentId) {
         try {
-            return commentRepository.removeLike(CurrentUser.getId(), commentId);
+            return commentRepository.removeLike(currentUserId(), commentId);
         } catch (Exception ex) {
             throw new CustomHttpException("Something went wrong with unliking comment", HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-public interface PostRepository extends CRUDRepository<PostEntity> {
+public interface PostRepository {
     List<PostEntity> getAllByCreatorId(long creatorId);
 
     List<UserEntity> getSubscribedUsers(long topicId);
@@ -24,5 +24,15 @@ public interface PostRepository extends CRUDRepository<PostEntity> {
 
     long removeLike(long userId, long postId);
 
-    List<PostEntity> getAll(String group, int limit, long lastCount, boolean initial, boolean asc);
+    List<PostEntity> getAll(long userId);
+
+    List<PostEntity> getAll(String group, int limit, long lastCount, boolean initial, boolean asc, long userId);
+
+    PostEntity getById(long id, long userId);
+
+    long add(PostEntity post) throws SQLException;
+
+    void update(PostEntity post);
+
+    void delete(long id);
 }

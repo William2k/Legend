@@ -33,13 +33,14 @@ public class PostRepositoryImpl implements PostRepository {
                 "WHERE c.post_id = p.id " +
                 "AND c.date_created BETWEEN NOW() - INTERVAL '24 HOURS' AND NOW() " +
                 "AND c.is_active = true) " +
-                "AS comments_today " +
+                "AS comments_today, (SELECT liked FROM legend.users_likes WHERE user_id = :userId AND post_id = id) " +
                 "FROM legend.posts AS p " +
                 "WHERE p.creator_id = :id " +
                 "AND p.is_active = true";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
-            .addValue("id", creatorId);
+                .addValue("id", creatorId)
+                .addValue("userId", creatorId);
 
         List<PostEntity> result = customJdbc.query(sql, namedParameters, RowMappings::postRowMapping);
 
@@ -68,14 +69,15 @@ public class PostRepositoryImpl implements PostRepository {
                 "WHERE c.post_id = p.id " +
                 "AND c.date_created BETWEEN NOW() - INTERVAL '24 HOURS' AND NOW() " +
                 "AND c.is_active = true) " +
-                "AS comments_today " +
+                "AS comments_today, (SELECT liked FROM legend.users_likes WHERE user_id = :userId AND post_id = id) " +
                 "FROM legend.posts AS p JOIN legend.users_topics AS ut ON p.id = ut.topic_id " +
                 "WHERE ut.user_id = :id " +
                 "AND p.is_active = true " +
                 "AND ut,is_active = true";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
-            .addValue("id", userId);
+                .addValue("id", userId)
+                .addValue("userId", userId);
 
         List<PostEntity> result = customJdbc.query(sql, namedParameters, RowMappings::postRowMapping);
 
@@ -209,29 +211,32 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public List<PostEntity> getAll() {
+    public List<PostEntity> getAll(long userId) {
         String sql = "SELECT p.*, " +
                 "(SELECT COUNT(*) FROM legend.comments AS c " +
                 "WHERE c.post_id = p.id " +
                 "AND c.date_created BETWEEN NOW() - INTERVAL '24 HOURS' AND NOW() " +
                 "AND c.is_active = true) " +
-                "AS comments_today " +
+                "AS comments_today, (SELECT liked FROM legend.users_likes WHERE user_id = :userId AND post_id = id) " +
                 "FROM legend.posts AS p " +
                 "WHERE p.is_active = true";
 
-        List<PostEntity> result = customJdbc.query(sql, RowMappings::postRowMapping);
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("userId", userId);
+
+        List<PostEntity> result = customJdbc.query(sql, namedParameters, RowMappings::postRowMapping);
 
         return result;
     }
 
     @Override
-    public List<PostEntity> getAll(String group, int limit, long lastCount, boolean initial, boolean asc) {
+    public List<PostEntity> getAll(String group, int limit, long lastCount, boolean initial, boolean asc, long userId) {
         String sql = "SELECT p.*, " +
                 "(SELECT COUNT(*) FROM legend.comments AS c " +
                 "WHERE c.post_id = p.id " +
                 "AND c.date_created BETWEEN NOW() - INTERVAL '24 HOURS' AND NOW() " +
                 "AND c.is_active = true) " +
-                "AS comments_today " +
+                "AS comments_today, (SELECT liked FROM legend.users_likes WHERE user_id = :userId AND post_id = id) " +
                 "FROM legend.posts AS p " +
                 "WHERE p.is_active = true " +
                 "AND p.group_id = (SELECT g.id FROM legend.groups AS g WHERE UPPER(g.name) = :group) ";
@@ -246,7 +251,8 @@ public class PostRepositoryImpl implements PostRepository {
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
                 .addValue("lastCount", lastCount)
                 .addValue("group", group.toUpperCase())
-                .addValue("limit", limit);
+                .addValue("limit", limit)
+                .addValue("userId", userId);
 
         List<PostEntity> result =  customJdbc.query(sql, namedParameters, RowMappings::postRowMapping);
 
@@ -254,19 +260,20 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public PostEntity getById(long id) {
+    public PostEntity getById(long id, long userId) {
         String sql = "SELECT p.*, " +
                 "(SELECT COUNT(*) FROM legend.comments AS c " +
                 "WHERE c.post_id = p.id " +
                 "AND c.date_created BETWEEN NOW() - INTERVAL '24 HOURS' AND NOW() " +
                 "AND c.is_active = true) " +
-                "AS comments_today " +
+                "AS comments_today, (SELECT liked FROM legend.users_likes WHERE user_id = :userId AND post_id = id) " +
                 "FROM legend.posts AS p " +
                 "WHERE p.id = :id " +
                 "AND p.is_active = true";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
-            .addValue("id", id);
+                .addValue("id", id)
+                .addValue("userId", userId);
 
         PostEntity result = customJdbc.queryForObject(sql, namedParameters, RowMappings::postRowMapping);
 
