@@ -1,5 +1,6 @@
 package com.legendApi.services;
 
+import com.legendApi.core.enums.SortType;
 import com.legendApi.core.exceptions.CustomHttpException;
 import com.legendApi.dto.CommentResponseDTO;
 import com.legendApi.models.AddComment;
@@ -35,10 +36,10 @@ public class CommentService {
         return entityToDTO(comment, 0, maxLevel, asc, currentUserId);
     }
 
-    public List<CommentResponseDTO> getAll(long post, int limit, LocalDateTime lastDateCreated, boolean initial, int maxLevel, boolean asc) {
+    public List<CommentResponseDTO> getAll(long post, int limit, LocalDateTime lastDateCreated, long lastLikes, boolean initial, int maxLevel, SortType sortType, boolean asc) {
         long currentUserId = currentUserId();
 
-        List<CommentEntity> comments = commentRepository.getAll(post, limit, lastDateCreated, initial, asc, currentUserId);
+        List<CommentEntity> comments = commentRepository.getAll(post, limit, lastDateCreated, lastLikes, initial, sortType, asc, currentUserId);
 
         return comments.parallelStream().map(commentEntity -> entityToDTO(commentEntity, 0, maxLevel, asc, currentUserId)).collect(Collectors.toList());
     }

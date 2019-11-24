@@ -1,5 +1,6 @@
 package com.legendApi.controllers;
 
+import com.legendApi.core.enums.SortType;
 import com.legendApi.dto.CommentResponseDTO;
 import com.legendApi.models.AddComment;
 import com.legendApi.services.CommentService;
@@ -29,8 +30,12 @@ public class CommentController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<CommentResponseDTO> getCommentsForPost(@RequestParam("post") long post, @RequestParam("limit") int limit, @RequestParam("lastDateCreated") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime lastDateCreated, @RequestParam("initial") boolean initial, @RequestParam(value = "maxLevel", defaultValue = "4") int maxLevel, @RequestParam("asc") boolean asc) {
-        List<CommentResponseDTO> result = commentService.getAll(post, limit, lastDateCreated, initial, maxLevel, asc);
+    public List<CommentResponseDTO> getCommentsForPost(@RequestParam("post") long post, @RequestParam("limit") int limit,
+                                                       @RequestParam("lastDateCreated") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime lastDateCreated,
+                                                       @RequestParam("lastLikes") long lastLikes,
+                                                       @RequestParam("initial") boolean initial, @RequestParam(value = "maxLevel", defaultValue = "4") int maxLevel,
+                                                       @RequestParam(value = "sortType", defaultValue = "likes") SortType sortType, @RequestParam("asc") boolean asc) {
+        List<CommentResponseDTO> result = commentService.getAll(post, limit, lastDateCreated, lastLikes, initial, maxLevel, sortType, asc);
 
         return result;
     }

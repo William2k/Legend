@@ -1,6 +1,7 @@
 package com.legendApi.repositories.implementations;
 
 import com.legendApi.core.CustomJdbc;
+import com.legendApi.core.enums.SortType;
 import com.legendApi.models.entities.CommentEntity;
 import com.legendApi.repositories.CommentRepository;
 import com.legendApi.repositories.implementations.rowMappings.RowMappings;
@@ -59,7 +60,7 @@ public class CommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
-    public List<CommentEntity> getAll(long post, int limit, LocalDateTime lastDateCreated, boolean initial, boolean asc, long userId) {
+    public List<CommentEntity> getAll(long post, int limit, LocalDateTime lastDateCreated, long lastLikes, boolean initial, SortType sortType, boolean asc, long userId) {
         String sql = "SELECT *, (SELECT liked FROM legend.users_likes WHERE user_id = :userId AND comment_id = id) " +
                 "FROM legend.comments " +
                 "WHERE is_active = true " +
@@ -67,17 +68,34 @@ public class CommentRepositoryImpl implements CommentRepository {
                 "AND parent_comment_id = 0 ";
 
         if(!initial) {
-            sql += asc ? "AND date_created > :lastDateCreated " : "AND date_created < :lastDateCreated ";
+            switch (sortType) {
+                case date:
+                    sql += asc ? "AND date_created > :lastDateCreated " : "AND date_created < :lastDateCreated ";
+                    break;
+                case likes:
+                    sql += asc ? "AND likes > :lastLikes " : "AND likes < :lastLikes ";
+                    break;
+            }
         }
 
-        sql += "ORDER BY date_created " + (asc ? "ASC " : "DESC ") +
-                "LIMIT :limit";
+        switch (sortType){
+            case date:
+                sql += "ORDER BY date_created " + (asc ? "ASC " : "DESC ");
+                break;
+            case likes:
+                sql += "ORDER BY likes " +  (asc ? "ASC " : "DESC ") + ", date_created DESC ";
+                break;
+        }
+
+        sql += "LIMIT :limit";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
                 .addValue("post", post)
                 .addValue("lastDateCreated", lastDateCreated)
+                .addValue("lastLikes", lastLikes)
                 .addValue("limit", limit)
                 .addValue("userId", userId);
+
 
         List<CommentEntity> result = customJdbc.query(sql, namedParameters, RowMappings::commentRowMapping);
 
