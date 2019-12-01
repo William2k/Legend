@@ -73,7 +73,8 @@ public class CommentRepositoryImpl implements CommentRepository {
                     sql += asc ? "AND date_created > :lastDateCreated " : "AND date_created < :lastDateCreated ";
                     break;
                 case likes:
-                    sql += asc ? "AND likes > :lastLikes " : "AND likes < :lastLikes ";
+                    sql += asc ? "AND (likes > :lastLikes OR (likes = :lastLikes AND date_created < :lastDateCreated)) " :
+                            "AND (likes < :lastLikes OR (likes = :lastLikes AND date_created < :lastDateCreated)) " ;
                     break;
             }
         }
