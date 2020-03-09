@@ -55,6 +55,16 @@ public class GroupService {
         return groupDtos;
    }
 
+    public List<GroupResponseDTO> searchGroups(String term) {
+        List<GroupEntity> groups = groupRepository.searchGroups(term);
+
+        List<GroupResponseDTO> groupDtos = groups
+                .parallelStream().map(GroupResponseDTO::new)
+                .collect(Collectors.toList());
+
+        return groupDtos;
+    }
+
     public List<GroupResponseDTO> getAll(int limit, long lastCount, boolean initial, boolean asc) {
         List<GroupEntity> groups = groupRepository.getAll(limit, lastCount, initial, asc);
 

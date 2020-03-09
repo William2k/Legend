@@ -38,12 +38,18 @@ public class PostService {
         return result;
     }
 
-    public List<PostResponseDTO> getAllPosts(String group, int limit, long lastCount, boolean initial, boolean asc) {
-        long currentUserId = 0;
+    public List<PostResponseDTO> searchPosts(String term) {
+        List<PostEntity> posts = postRepository.searchPosts(term, currentUserId());
 
-        try{
-            currentUserId = currentUserId();
-        } catch (Exception ignored) {}
+        List<PostResponseDTO> postDtos = posts
+                .parallelStream().map(PostResponseDTO::new)
+                .collect(Collectors.toList());
+
+        return postDtos;
+    }
+
+    public List<PostResponseDTO> getAllPosts(String group, int limit, long lastCount, boolean initial, boolean asc) {
+        long currentUserId = currentUserId();
 
         List<PostEntity> posts = postRepository.getAll(group, limit, lastCount, initial, asc, currentUserId);
 

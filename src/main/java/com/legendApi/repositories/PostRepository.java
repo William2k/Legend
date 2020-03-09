@@ -24,6 +24,8 @@ public interface PostRepository {
 
     long removeLike(long userId, long postId);
 
+    List<PostEntity> searchPosts(String term, long userId);
+
     List<PostEntity> getAll(long userId);
 
     List<PostEntity> getAll(String group, int limit, long lastCount, boolean initial, boolean asc, long userId);

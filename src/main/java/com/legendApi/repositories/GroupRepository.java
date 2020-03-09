@@ -28,6 +28,8 @@ public interface GroupRepository extends CRUDRepository<GroupEntity> {
 
     List<UserEntity> getSubscribedUsers(long groupId);
 
+    List<GroupEntity> searchGroups(String term);
+
     List<GroupEntity> getSubscribedGroups(long userId);
 
     List<String> getSimpleSubscribedGroups(long userId);

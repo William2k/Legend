@@ -37,6 +37,13 @@ public class GroupController {
         return groups;
     }
 
+    @RequestMapping(value = "search", method = RequestMethod.GET)
+    public List<GroupResponseDTO> getGroups(@RequestParam("term") String term) {
+        List<GroupResponseDTO> groups = groupService.searchGroups(term);
+
+        return groups;
+    }
+
     @RequestMapping(value = "current-user", method = RequestMethod.GET)
     public List<GroupResponseDTO> getUserGroups() {
         List<GroupResponseDTO> groups = groupService.getUserGroups();

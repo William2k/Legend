@@ -190,6 +190,27 @@ public class GroupRepositoryImpl implements GroupRepository {
     }
 
     @Override
+    public List<GroupEntity> searchGroups(String term) {
+        String sql = "SELECT g.*, " +
+                "(SELECT COUNT(*) FROM legend.posts AS p " +
+                "WHERE p.group_id = g.id " +
+                "AND p.date_created BETWEEN NOW() - INTERVAL '24 HOURS' AND NOW() " +
+                "AND p.is_active = true) " +
+                "AS posts_today " +
+                "FROM legend.groups AS g " +
+                "WHERE g.is_active = true " +
+                "AND (LOWER(g.description) LIKE CONCAT('%', :term, '%') OR :term = ANY(g.tags)) " +
+                "ORDER BY posts_today, g.id";
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("term", term.toLowerCase());
+
+        List<GroupEntity> result = customJdbc.query(sql, namedParameters, RowMappings::groupRowMapping);
+
+        return result;
+    }
+
+    @Override
     public List<GroupEntity> getSubscribedGroups(long userId) {
         String sql = "SELECT g.* " +
                 "FROM legend.groups AS g JOIN legend.users_groups AS ug ON g.id = ug.topic_id " +

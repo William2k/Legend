@@ -211,6 +211,27 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
+    public List<PostEntity> searchPosts(String term, long userId) {
+        String sql = "SELECT p.*, " +
+                "(SELECT COUNT(*) FROM legend.comments AS c " +
+                "WHERE c.post_id = p.id " +
+                "AND c.date_created BETWEEN NOW() - INTERVAL '24 HOURS' AND NOW() " +
+                "AND c.is_active = true) " +
+                "AS comments_today, (SELECT liked FROM legend.users_likes WHERE user_id = :userId AND post_id = id) " +
+                "FROM legend.posts AS p " +
+                "WHERE p.is_active = true " +
+                "AND LOWER(p.name) LIKE CONCAT('%', :term, '%')";
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("term", term.toLowerCase());
+
+        List<PostEntity> result = customJdbc.query(sql, namedParameters, RowMappings::postRowMapping);
+
+        return result;
+    }
+
+    @Override
     public List<PostEntity> getAll(long userId) {
         String sql = "SELECT p.*, " +
                 "(SELECT COUNT(*) FROM legend.comments AS c " +

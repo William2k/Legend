@@ -27,6 +27,13 @@ public class PostController {
         return post;
     }
 
+    @RequestMapping(value = "search", method = RequestMethod.GET)
+    public List<PostResponseDTO> getPosts(@RequestParam("term") String term) {
+        List<PostResponseDTO> posts = postService.searchPosts(term);
+
+        return posts;
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public List<PostResponseDTO> getPosts(@RequestParam("group") String group, @RequestParam("limit") int limit, @RequestParam("lastCount") long lastCount, @RequestParam("initial") boolean initial, @RequestParam("asc") boolean asc) {
         List<PostResponseDTO> posts = postService.getAllPosts(group, limit, lastCount, initial, asc);
