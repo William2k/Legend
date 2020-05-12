@@ -199,7 +199,7 @@ public class GroupRepositoryImpl implements GroupRepository {
                 "AS posts_today " +
                 "FROM legend.groups AS g " +
                 "WHERE g.is_active = true " +
-                "AND (LOWER(g.description) LIKE CONCAT('%', :term, '%') OR :term = ANY(g.tags)) " +
+                "AND LOWER(g.name) LIKE CONCAT('%', :term, '%') OR (LOWER(g.description) LIKE CONCAT('%', :term, '%') OR :term = ANY(g.tags)) " +
                 "ORDER BY posts_today, g.id";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource()
